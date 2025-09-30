@@ -7,7 +7,7 @@ try:
     TALIB_AVAILABLE = True
 except ImportError:
     TALIB_AVAILABLE = False
-    print("TA-Lib not available, using fallback implementations")
+    # Silent fallback for cloud deployment
 
 class TechnicalAnalyzer:
     """

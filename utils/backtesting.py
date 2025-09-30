@@ -4,12 +4,14 @@ import yfinance as yf
 from typing import Dict, List, Tuple, Optional
 from datetime import datetime, timedelta
 try:
+    import matplotlib
+    matplotlib.use('Agg')  # Use non-interactive backend for cloud
     import matplotlib.pyplot as plt
     import seaborn as sns
     PLOTTING_AVAILABLE = True
 except ImportError:
     PLOTTING_AVAILABLE = False
-    print("Matplotlib/Seaborn not available, plotting features disabled")
+    # Silent fallback for cloud deployment
 
 class Backtester:
     """
