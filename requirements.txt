@@ -7,8 +7,3 @@ python-dotenv
 requests
 beautifulsoup4
 plotly
-matplotlib
-seaborn
-fpdf
-scikit-learn
-scipy
