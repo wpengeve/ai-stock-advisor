@@ -570,12 +570,7 @@ with tab2:
                 suggestions = suggest_stocks_to_watch(ticker_list=selected)  # NO custom_prompt for batching to work
 
             # 5. Call GPT to generate suggestions
-            st.write(f"🧪 Sending {len(selected)} tickers to suggest_stocks_to_watch")
 
-            # Debugging GPT output
-            if choice == "Top 3 only":
-                st.markdown("### 🔍 Prompt Preview")
-                st.code(prompt)
 
             if not suggestions:
                 st.error("⚠️ GPT returned an empty response.")
