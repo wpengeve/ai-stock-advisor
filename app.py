@@ -1173,27 +1173,27 @@ with tab3:
                         else:
                             st.success("✅ **Good budget utilization** - Most of your budget is allocated!")
                         
-                        # Export options
-                        st.markdown("### 📤 Export Options")
-                        col1, col2 = st.columns(2)
-                        
-                        with col1:
-                            # CSV export
-                            csv_data = pd.DataFrame(allocation_data[:-1])  # Exclude total row
-                            csv = csv_data.to_csv(index=False)
-                            st.download_button(
-                                label="📄 Download CSV",
-                                data=csv,
-                                file_name=f"portfolio_allocation_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
-                                mime="text/csv"
-                            )
-                        
-                        with col2:
-                            # PDF export
-                            if st.button("📋 Generate PDF Report"):
-                                with st.spinner("Generating PDF report..."):
-                                    generate_portfolio_pdf(allocation_data, budget, tech_preference)
-                                st.success("✅ PDF report generated!")
+                        # Export options - COMMENTED OUT
+                        # st.markdown("### 📤 Export Options")
+                        # col1, col2 = st.columns(2)
+                        # 
+                        # with col1:
+                        #     # CSV export
+                        #     csv_data = pd.DataFrame(allocation_data[:-1])  # Exclude total row
+                        #     csv = csv_data.to_csv(index=False)
+                        #     st.download_button(
+                        #         label="📄 Download CSV",
+                        #         data=csv,
+                        #         file_name=f"portfolio_allocation_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                        #         mime="text/csv"
+                        #     )
+                        # 
+                        # with col2:
+                        #     # PDF export
+                        #     if st.button("📋 Generate PDF Report"):
+                        #         with st.spinner("Generating PDF report..."):
+                        #             generate_portfolio_pdf(allocation_data, budget, tech_preference)
+                        #         st.success("✅ PDF report generated!")
                     else:
                         st.error("❌ Failed to calculate allocation. Please check your inputs.")
             else:
