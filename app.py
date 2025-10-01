@@ -687,17 +687,18 @@ with tab3:
 
         # Add GPT risk comparison section
         if len(tickers_only) >= 2:
-            # Email + PDF export
-            st.markdown("### 📩 Email Report")
-            email = st.text_input("Enter your email to receive this as a PDF report")
-            # PDF and email features temporarily disabled for cloud deployment
-            st.info("📧 **PDF Report & Email features are temporarily disabled for cloud deployment**")
-            st.markdown("""
-            **Alternative options:**
-            - Copy the analysis text above
-            - Take screenshots of the charts
-            - Use the data tables for your records
-            """)
+            # Email + PDF export - COMMENTED OUT
+            # st.markdown("### 📩 Email Report")
+            # email = st.text_input("Enter your email to receive this as a PDF report")
+            # # PDF and email features temporarily disabled for cloud deployment
+            # st.info("📧 **PDF Report & Email features are temporarily disabled for cloud deployment**")
+            # st.markdown("""
+            # **Alternative options:**
+            # - Copy the analysis text above
+            # - Take screenshots of the charts
+            # - Use the data tables for your records
+            # """)
+            pass
     
     with tab4:
         st.header("💰 Portfolio Allocator")
