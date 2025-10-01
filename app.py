@@ -587,9 +587,22 @@ with tab2:
                 selected = trending[:10]
                 st.write(f"🔍 DEBUG: Selected stocks: {selected}")
                 
+                # Use custom prompt for All 10 to match Top 3 approach
+                trending_formatted = "\n".join([f"- {ticker} ({name})" for ticker, name in selected])
+                prompt = f"""
+            You are a stock market investment assistant.
+
+            Here are the trending stocks:
+            {trending_formatted}
+
+            For each stock above, briefly explain whether it's a good opportunity to watch or invest in now. 
+            Write 1–2 sentences for each. 
+            Respond in a clean readable bullet point format.
+            """
+                
                 st.write("🔍 DEBUG: Calling GPT API...")
                 with st.spinner("💭 Generating analysis for All 10 stocks..."):
-                    suggestions = suggest_stocks_to_watch(ticker_list=selected)
+                    suggestions = suggest_stocks_to_watch(ticker_list=selected, custom_prompt=prompt)
                 
                 st.write(f"🔍 DEBUG: GPT Response length: {len(suggestions) if suggestions else 0}")
                 
