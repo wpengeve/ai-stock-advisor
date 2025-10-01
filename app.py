@@ -600,7 +600,7 @@ with tab2:
                     selected = trending[:10]
                     st.write(f"🔍 DEBUG: Selected stocks: {selected}")
                     
-                    # Use custom prompt approach like Top 3
+                    # Try direct GPT call instead of using suggest_stocks_to_watch function
                     trending_formatted = "\n".join([f"- {ticker} ({name})" for ticker, name in selected])
                     prompt = f"""
                 You are a stock market investment assistant.
@@ -613,9 +613,23 @@ with tab2:
                 Respond in a clean readable bullet point format.
                 """
                     
-                    st.write("🔍 DEBUG: Calling GPT API with custom prompt...")
+                    st.write("🔍 DEBUG: Making direct GPT API call...")
                     with st.spinner("💭 Generating analysis for All 10 stocks..."):
-                        suggestions = suggest_stocks_to_watch(ticker_list=selected, custom_prompt=prompt)
+                        try:
+                            from utils.llm import client
+                            response = client.chat.completions.create(
+                                model="gpt-4",
+                                messages=[
+                                    {"role": "system", "content": "You are a helpful stock research assistant."},
+                                    {"role": "user", "content": prompt}
+                                ],
+                                max_tokens=2000,
+                                temperature=0.7
+                            )
+                            suggestions = response.choices[0].message.content.strip()
+                        except Exception as e:
+                            st.write(f"🔍 DEBUG: GPT Error: {e}")
+                            suggestions = f"❌ GPT Error: {e}"
                     
                     st.write(f"🔍 DEBUG: GPT Response length: {len(suggestions) if suggestions else 0}")
                     
@@ -623,12 +637,12 @@ with tab2:
                     st.session_state.analysis_results = suggestions
                     
                     # Display results
-                    if suggestions:
+                    if suggestions and not suggestions.startswith("❌"):
                         st.markdown("### 🧠 GPT Watchlist Suggestions")
                         st.markdown(suggestions)
                         st.info("📊 Analysis for All 10 trending stocks")
                     else:
-                        st.error("⚠️ GPT returned an empty response.")
+                        st.error("⚠️ GPT returned an empty response or error.")
             
             # Display existing results if available
             elif st.session_state.analysis_results:
