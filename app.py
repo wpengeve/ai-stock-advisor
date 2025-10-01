@@ -549,7 +549,10 @@ with tab2:
             
             with col1:
                 if st.button("🔝 Top 3 Only", key="top3_btn", use_container_width=True):
+                    st.success("🔝 Top 3 button clicked!")
                     selected = trending[:3]
+                    st.write(f"Selected stocks: {selected}")
+                    
                     trending_formatted = "\n".join([f"- {ticker} ({name})" for ticker, name in selected])
                     prompt = f"""
                 You are a stock market investment assistant.
@@ -563,6 +566,8 @@ with tab2:
                 """
                     with st.spinner("💭 Generating analysis for Top 3 stocks..."):
                         suggestions = suggest_stocks_to_watch(ticker_list=selected, custom_prompt=prompt)
+                    
+                    st.write(f"GPT Response: {suggestions[:100] if suggestions else 'None'}...")
                     
                     # Store results in session state
                     st.session_state.analysis_results = suggestions
@@ -578,9 +583,14 @@ with tab2:
 
             with col2:
                 if st.button("📊 All 10 Stocks", key="all10_btn", use_container_width=True):
+                    st.success("📊 All 10 button clicked!")
                     selected = trending[:10]
+                    st.write(f"Selected stocks: {selected}")
+                    
                     with st.spinner("💭 Generating analysis for All 10 stocks..."):
                         suggestions = suggest_stocks_to_watch(ticker_list=selected)
+                    
+                    st.write(f"GPT Response: {suggestions[:100] if suggestions else 'None'}...")
                     
                     # Store results in session state
                     st.session_state.analysis_results = suggestions
