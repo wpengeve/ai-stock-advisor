@@ -587,58 +587,19 @@ with tab2:
                 selected = trending[:10]
                 st.write(f"🔍 DEBUG: Selected stocks: {selected}")
                 
-                # Try a different approach - process in smaller batches to avoid issues
-                st.write("🔍 DEBUG: Processing in batches to avoid jumping...")
+                # Simple approach - use default batching
+                st.write("🔍 DEBUG: Using default batching approach...")
                 
-                # Process first 5 stocks
-                first_batch = selected[:5]
-                trending_formatted_1 = "\n".join([f"- {ticker} ({name})" for ticker, name in first_batch])
-                prompt_1 = f"""
-            You are a stock market investment assistant.
-
-            Here are the trending stocks:
-            {trending_formatted_1}
-
-            For each stock above, briefly explain whether it's a good opportunity to watch or invest in now. 
-            Write 1–2 sentences for each. 
-            Respond in a clean readable bullet point format.
-            """
+                st.write("🔍 DEBUG: Calling GPT API...")
+                with st.spinner("💭 Generating analysis for All 10 stocks..."):
+                    suggestions = suggest_stocks_to_watch(ticker_list=selected)
                 
-                st.write("🔍 DEBUG: Calling GPT API for first batch...")
-                with st.spinner("💭 Generating analysis for first 5 stocks..."):
-                    suggestions_1 = suggest_stocks_to_watch(ticker_list=first_batch, custom_prompt=prompt_1)
-                
-                # Process second 5 stocks
-                second_batch = selected[5:10]
-                trending_formatted_2 = "\n".join([f"- {ticker} ({name})" for ticker, name in second_batch])
-                prompt_2 = f"""
-            You are a stock market investment assistant.
-
-            Here are the trending stocks:
-            {trending_formatted_2}
-
-            For each stock above, briefly explain whether it's a good opportunity to watch or invest in now. 
-            Write 1–2 sentences for each. 
-            Respond in a clean readable bullet point format.
-            """
-                
-                st.write("🔍 DEBUG: Calling GPT API for second batch...")
-                with st.spinner("💭 Generating analysis for next 5 stocks..."):
-                    suggestions_2 = suggest_stocks_to_watch(ticker_list=second_batch, custom_prompt=prompt_2)
-                
-                # Combine results
-                combined_suggestions = ""
-                if suggestions_1:
-                    combined_suggestions += suggestions_1 + "\n\n"
-                if suggestions_2:
-                    combined_suggestions += suggestions_2
-                
-                st.write(f"🔍 DEBUG: Combined response length: {len(combined_suggestions) if combined_suggestions else 0}")
+                st.write(f"🔍 DEBUG: GPT Response length: {len(suggestions) if suggestions else 0}")
                 
                 # Display results
-                if combined_suggestions:
+                if suggestions:
                     st.markdown("### 🧠 GPT Watchlist Suggestions")
-                    st.markdown(combined_suggestions)
+                    st.markdown(suggestions)
                     st.info("📊 Analysis for All 10 trending stocks")
                 else:
                     st.error("⚠️ GPT returned an empty response.")
