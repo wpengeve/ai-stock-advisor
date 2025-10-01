@@ -542,67 +542,73 @@ with tab2:
             st.markdown("### 🔥 Currently Trending Tickers")
             st.dataframe(df, hide_index=True)
 
-            # 3. Use separate buttons instead of radio button to prevent jumping
+            # 3. Use form to prevent jumping behavior
             st.markdown("**📈 Choose your analysis option:**")
             
-            col1, col2 = st.columns(2)
+            with st.form("analysis_form", clear_on_submit=False):
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    top3_clicked = st.form_submit_button("🔝 Top 3 Only", use_container_width=True)
+                
+                with col2:
+                    all10_clicked = st.form_submit_button("📊 All 10 Stocks", use_container_width=True)
             
-            with col1:
-                if st.button("🔝 Top 3 Only", key="top3_btn", use_container_width=True):
-                    st.success("🔝 Top 3 button clicked!")
-                    selected = trending[:3]
-                    st.write(f"Selected stocks: {selected}")
-                    
-                    trending_formatted = "\n".join([f"- {ticker} ({name})" for ticker, name in selected])
-                    prompt = f"""
-                You are a stock market investment assistant.
+            # Process button clicks outside the form to prevent jumping
+            if top3_clicked:
+                st.success("🔝 Top 3 button clicked!")
+                selected = trending[:3]
+                st.write(f"Selected stocks: {selected}")
+                
+                trending_formatted = "\n".join([f"- {ticker} ({name})" for ticker, name in selected])
+                prompt = f"""
+            You are a stock market investment assistant.
 
-                Here are the trending stocks:
-                {trending_formatted}
+            Here are the trending stocks:
+            {trending_formatted}
 
-                For each stock above, briefly explain whether it's a good opportunity to watch or invest in now. 
-                Write 1–2 sentences for each. 
-                Respond in a clean readable bullet point format.
-                """
-                    with st.spinner("💭 Generating analysis for Top 3 stocks..."):
-                        suggestions = suggest_stocks_to_watch(ticker_list=selected, custom_prompt=prompt)
-                    
-                    st.write(f"GPT Response: {suggestions[:100] if suggestions else 'None'}...")
-                    
-                    # Store results in session state
-                    st.session_state.analysis_results = suggestions
-                    st.session_state.analysis_choice = "Top 3 only"
-                    
-                    # Display results immediately
-                    if suggestions:
-                        st.markdown("### 🧠 GPT Watchlist Suggestions")
-                        st.markdown(suggestions)
-                        st.info("📊 Analysis for Top 3 trending stocks")
-                    else:
-                        st.error("⚠️ GPT returned an empty response.")
-
-            with col2:
-                if st.button("📊 All 10 Stocks", key="all10_btn", use_container_width=True):
-                    st.success("📊 All 10 button clicked!")
-                    selected = trending[:10]
-                    st.write(f"Selected stocks: {selected}")
-                    
-                    with st.spinner("💭 Generating analysis for All 10 stocks..."):
-                        suggestions = suggest_stocks_to_watch(ticker_list=selected)
-                    
-                    st.write(f"GPT Response: {suggestions[:100] if suggestions else 'None'}...")
-                    
-                    # Store results in session state
-                    st.session_state.analysis_results = suggestions
-                    st.session_state.analysis_choice = "All 10"
-                    
-                    # Display results immediately
-                    if suggestions:
-                        st.markdown("### 🧠 GPT Watchlist Suggestions")
-                        st.markdown(suggestions)
-                        st.info("📊 Analysis for All 10 trending stocks")
-                    else:
-                        st.error("⚠️ GPT returned an empty response.")
+            For each stock above, briefly explain whether it's a good opportunity to watch or invest in now. 
+            Write 1–2 sentences for each. 
+            Respond in a clean readable bullet point format.
+            """
+                with st.spinner("💭 Generating analysis for Top 3 stocks..."):
+                    suggestions = suggest_stocks_to_watch(ticker_list=selected, custom_prompt=prompt)
+                
+                st.write(f"GPT Response: {suggestions[:100] if suggestions else 'None'}...")
+                
+                # Store results in session state
+                st.session_state.analysis_results = suggestions
+                st.session_state.analysis_choice = "Top 3 only"
+                
+                # Display results immediately
+                if suggestions:
+                    st.markdown("### 🧠 GPT Watchlist Suggestions")
+                    st.markdown(suggestions)
+                    st.info("📊 Analysis for Top 3 trending stocks")
+                else:
+                    st.error("⚠️ GPT returned an empty response.")
+            
+            if all10_clicked:
+                st.success("📊 All 10 button clicked!")
+                selected = trending[:10]
+                st.write(f"Selected stocks: {selected}")
+                
+                with st.spinner("💭 Generating analysis for All 10 stocks..."):
+                    suggestions = suggest_stocks_to_watch(ticker_list=selected)
+                
+                st.write(f"GPT Response: {suggestions[:100] if suggestions else 'None'}...")
+                
+                # Store results in session state
+                st.session_state.analysis_results = suggestions
+                st.session_state.analysis_choice = "All 10"
+                
+                # Display results immediately
+                if suggestions:
+                    st.markdown("### 🧠 GPT Watchlist Suggestions")
+                    st.markdown(suggestions)
+                    st.info("📊 Analysis for All 10 trending stocks")
+                else:
+                    st.error("⚠️ GPT returned an empty response.")
 
             # Also display any existing results from session state
             if 'analysis_results' in st.session_state and st.session_state.analysis_results:
