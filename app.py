@@ -1198,6 +1198,53 @@ with tab3:
                             if unused_budget > budget * 0.3:
                                 suggested_budget = budget * 1.5
                                 st.info(f"💡 **Consider increasing budget to ${suggested_budget:,.2f}** for better diversification")
+                            
+                            # Smart stock suggestions for better budget utilization
+                            st.markdown("### 🎯 Smart Stock Suggestions")
+                            
+                            # Calculate average price of selected stocks
+                            avg_price = sum(prices.get(ticker, 0) for ticker in selected_symbols) / len(selected_symbols)
+                            
+                            if avg_price > budget * 0.3:  # If average stock price is >30% of budget
+                                st.warning("⚠️ **Your stocks are too expensive for your budget!**")
+                                st.info(f"""
+                                **Current average stock price: ${avg_price:.2f}**
+                                **Recommended average price: ${budget * 0.1:.2f}** (10% of budget)
+                                
+                                **Better stock selection strategies:**
+                                - **Mix high and low-priced stocks** (e.g., AAPL + MSFT + some $20-50 stocks)
+                                - **Add dividend stocks** (often lower-priced, good for small budgets)
+                                - **Consider ETFs** (SPY, QQQ) for broad market exposure
+                                - **Use fractional shares** for expensive stocks you really want
+                                """)
+                            
+                            # Suggest specific stock categories
+                            st.markdown("**💡 Recommended stock mix for your budget:**")
+                            col1, col2, col3 = st.columns(3)
+                            
+                            with col1:
+                                st.markdown("""
+                                **🏢 Large Cap (Stable)**
+                                - JNJ, PG, KO, WMT
+                                - Price: $50-150
+                                - Good for 20-30% allocation
+                                """)
+                            
+                            with col2:
+                                st.markdown("""
+                                **💻 Tech Growth**
+                                - AAPL, MSFT, GOOGL
+                                - Price: $100-300
+                                - Good for 30-40% allocation
+                                """)
+                            
+                            with col3:
+                                st.markdown("""
+                                **📈 ETFs (Diversified)**
+                                - SPY, QQQ, VTI
+                                - Price: $300-500
+                                - Good for 20-30% allocation
+                                """)
                         
                         # Export options - COMMENTED OUT
                         # st.markdown("### 📤 Export Options")

@@ -238,9 +238,10 @@ def allocate_portfolio_with_sector_preference(
         if price and price > 0:
             # Calculate target allocation based on weight
             target_allocation = budget * weight
+            
+            # Smart allocation: Try to use more budget if other stocks can't use theirs
             # Calculate shares (integer division)
             shares = int(target_allocation // price)
-            # Calculate actual allocated amount
             allocated = shares * price
             
             # Calculate what we could buy with fractional shares
@@ -272,6 +273,46 @@ def allocate_portfolio_with_sector_preference(
             "sector": sector,
             "is_tech": is_tech
         })
+    
+    # Budget redistribution: Try to use unused budget more efficiently
+    unused_budget = budget - total_allocated
+    if unused_budget > budget * 0.1:  # If more than 10% unused
+        print(f"Debug - Attempting budget redistribution for unused ${unused_budget:.2f}")
+        
+        # Find stocks that could use more budget (those with 0 shares but fractional potential)
+        redistributable = []
+        for item in allocation:
+            if item['shares'] == 0 and item['fractional_shares'] > 0:
+                # Calculate how much we could allocate to this stock
+                max_additional = min(unused_budget, item['fractional_allocated'] - item['allocated'])
+                if max_additional > 0:
+                    redistributable.append({
+                        'ticker': item['ticker'],
+                        'price': item['price'],
+                        'max_additional': max_additional,
+                        'current_allocated': item['allocated']
+                    })
+        
+        # Redistribute unused budget to stocks that can use it
+        for redist_item in sorted(redistributable, key=lambda x: x['max_additional'], reverse=True):
+            if unused_budget <= 0:
+                break
+                
+            # Calculate how much we can actually allocate
+            additional_allocation = min(unused_budget, redist_item['max_additional'])
+            additional_shares = int(additional_allocation // redist_item['price'])
+            actual_additional = additional_shares * redist_item['price']
+            
+            if actual_additional > 0:
+                # Update the allocation
+                for item in allocation:
+                    if item['ticker'] == redist_item['ticker']:
+                        item['shares'] += additional_shares
+                        item['allocated'] += actual_additional
+                        total_allocated += actual_additional
+                        unused_budget -= actual_additional
+                        print(f"Debug - Redistributed ${actual_additional:.2f} to {redist_item['ticker']} (${additional_shares} shares)")
+                        break
     
     # Add debug information
     print(f"Debug - Budget: ${budget}, Total Allocated: ${total_allocated:.2f}")
