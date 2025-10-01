@@ -16,8 +16,8 @@ from agent_reasoning.decision_maker import make_investment_decision
 # , explain_why_trending
 
 from utils.prompts import get_stock_summary_prompt
-from utils.email_sender import send_email_with_attachment
-from utils.pdf_report import generate_pdf_report
+# from utils.email_sender import send_email_with_attachment
+# from utils.pdf_report import generate_pdf_report
 from utils.mood_tools import detect_macro_mood_label
 from utils.mood_tracker import save_macro_mood
 # from agent_reasoning.generate_hypotheses import generate_investment_hypothesis
@@ -154,171 +154,171 @@ def generate_portfolio_pdf(allocation_data, budget, tech_preference):
 
 
 def main():
-    st.set_page_config(page_title="AI Stock Advisor", page_icon="📈")
-    
-    st.title("🤖 AI Stock Advisor")
-    st.markdown("Your LLM-powered assistant for investment research")
+st.set_page_config(page_title="AI Stock Advisor", page_icon="📈")
+
+st.title("🤖 AI Stock Advisor")
+st.markdown("Your LLM-powered assistant for investment research")
     
     # Add startup message
     st.success("🚀 **AI Stock Advisor is ready!** Enhanced with technical analysis, fundamental analysis, risk management, and backtesting capabilities.")
-    
-    # ✅ Add spinner while fetching trending stocks
-    with st.spinner("Loading trending stocks..."):
-        trending_stocks = get_trending_stocks(limit=30)
-    
+
+# ✅ Add spinner while fetching trending stocks
+with st.spinner("Loading trending stocks..."):
+    trending_stocks = get_trending_stocks(limit=30)
+
     tab1, tab2, tab3, tab4, tab5 = st.tabs(["📊 Stock Summary", "💡 Watchlist Suggestions", "📋 Compare Stocks", "💰 Portfolio Allocator", "🔬 Advanced Analysis"])
-    
-    with tab1:
-        st.header("📊 Get Market Summary for a Stock")
-        st.markdown("### 🔥 Trending Stocks Options")
-        
-        n_trending = st.slider(
-            "🔢 How many trending stocks to fetch?",
-            min_value=5, max_value=30, value=10, step=1
-        )
-        
-        trending = trending_stocks[:n_trending]
-        trending_with_change = []
-        
-        for sym, name in trending:
-            try:
-                stock_info = get_cached_stock_summary(sym)
-                
-                # Handle errors gracefully
+
+with tab1:
+    st.header("📊 Get Market Summary for a Stock")
+    st.markdown("### 🔥 Trending Stocks Options")
+
+    n_trending = st.slider(
+        "🔢 How many trending stocks to fetch?",
+        min_value=5, max_value=30, value=10, step=1
+    )
+
+    trending = trending_stocks[:n_trending]
+    trending_with_change = []
+
+    for sym, name in trending:
+        try:
+            stock_info = get_cached_stock_summary(sym)
+
+            # Handle errors gracefully
+            if stock_info.get("error"):
+                if "rate limit" in stock_info["error"].lower():
+                    st.warning(f"⚠️ Rate limit hit while fetching {sym}. Try again shortly.")
+                else:
+                    st.error(f"❌ Could not fetch data for {sym}. Error: {stock_info['error']}")
+                trending_with_change.append((sym, name, 0.0))
+                continue
+
+            hist = stock_info.get("history")
+            if hist is not None and not hist.empty:
+                price_change = ((hist["Close"].iloc[-1] - hist["Close"].iloc[0]) / hist["Close"].iloc[0]) * 100
+                trending_with_change.append((sym, name, round(price_change, 2)))
+            else:
+                trending_with_change.append((sym, name, 0.0))
+
+        except Exception as e:
+            st.error(f"❌ Unexpected error while fetching {sym}: {e}")
+            trending_with_change.append((sym, name, 0.0))
+
+    tickers_display = [f"{sym} - {name} ({change:+.2f}%)" for sym, name, change in trending_with_change]
+
+    selected_stocks = st.multiselect("📈 Pick one or more trending stocks to summarize", options=tickers_display)
+
+    if st.button("🎲 Surprise Me with a Trending Stock") and tickers_display:
+        random_stock = random.choice(tickers_display)
+        st.success(f"🎯 Random pick: {random_stock}")
+        selected_stocks = [random_stock]
+
+    if selected_stocks:
+        for selected_option in selected_stocks:
+            ticker = selected_option.split(" - ")[0]
+            st.markdown(f"### 📊 Summary for **{ticker}**")
+
+            with st.spinner(f"Fetching data for {ticker}..."):
+                stock_info = get_cached_stock_summary(ticker)
+
+                # Handle API error messages early
                 if stock_info.get("error"):
                     if "rate limit" in stock_info["error"].lower():
-                        st.warning(f"⚠️ Rate limit hit while fetching {sym}. Try again shortly.")
+                        st.warning(f"⚠️ Rate limit hit while fetching {ticker}. Try again shortly.")
                     else:
-                        st.error(f"❌ Could not fetch data for {sym}. Error: {stock_info['error']}")
-                    trending_with_change.append((sym, name, 0.0))
+                        st.error(f"❌ Could not fetch data for {ticker}. Error: {stock_info['error']}")
                     continue
-                
+
+                # Proceed with normal check
                 hist = stock_info.get("history")
-                if hist is not None and not hist.empty:
-                    price_change = ((hist["Close"].iloc[-1] - hist["Close"].iloc[0]) / hist["Close"].iloc[0]) * 100
-                    trending_with_change.append((sym, name, round(price_change, 2)))
+                if not stock_info.get("price") or hist is None or hist.empty:
+                    st.error(f"❌ Could not fetch full data for {ticker}. Skipping.")
+                    continue
+
+                if hist is None or hist.empty:
+                    st.warning(f"⚠️ No historical data for {ticker}. Displaying basic info only.")
+
+                price_change = ((hist["Close"].iloc[-1] - hist["Close"].iloc[0]) / hist["Close"].iloc[0]) * 100
+
+                # Price Chart
+                st.markdown(f"### 📉 5-Day Price Trend for {ticker}")
+                fig = go.Figure()
+                fig.add_trace(go.Scatter(x=hist.index, y=hist["Close"], mode='lines+markers', name=f"{ticker} Price"))
+                fig.update_layout(
+                    title=f"{ticker} 5-Day Price Trend",
+                    xaxis_title="Date", yaxis_title="Price ($)",
+                    hovermode="x unified", xaxis_tickangle=-45
+                )
+                st.plotly_chart(fig, use_container_width=True)
+
+                # Headlines and Summary
+                headlines = get_all_headlines(ticker)
+                mood_text, summary_text = generate_stock_summary(
+                    ticker, stock_info["name"], stock_info["price"], price_change, headlines
+                )
+
+                mood_label = detect_macro_mood_label(mood_text)
+
+                st.markdown("### 🧠 Macro Market Mood")
+                if mood_label == "Risk-On":
+                    st.success(mood_text)
+                elif mood_label == "Risk-Off":
+                    st.error(mood_text)
                 else:
-                    trending_with_change.append((sym, name, 0.0))
-                
-            except Exception as e:
-                st.error(f"❌ Unexpected error while fetching {sym}: {e}")
-                trending_with_change.append((sym, name, 0.0))
-        
-        tickers_display = [f"{sym} - {name} ({change:+.2f}%)" for sym, name, change in trending_with_change]
-        
-        selected_stocks = st.multiselect("📈 Pick one or more trending stocks to summarize", options=tickers_display)
-        
-        if st.button("🎲 Surprise Me with a Trending Stock") and tickers_display:
-            random_stock = random.choice(tickers_display)
-            st.success(f"🎯 Random pick: {random_stock}")
-            selected_stocks = [random_stock]
-        
-        if selected_stocks:
-            for selected_option in selected_stocks:
-                ticker = selected_option.split(" - ")[0]
-                st.markdown(f"### 📊 Summary for **{ticker}**")
-                
-                with st.spinner(f"Fetching data for {ticker}..."):
-                    stock_info = get_cached_stock_summary(ticker)
-                    
-                    # Handle API error messages early
-                    if stock_info.get("error"):
-                        if "rate limit" in stock_info["error"].lower():
-                            st.warning(f"⚠️ Rate limit hit while fetching {ticker}. Try again shortly.")
-                        else:
-                            st.error(f"❌ Could not fetch data for {ticker}. Error: {stock_info['error']}")
-                        continue
-                    
-                    # Proceed with normal check
-                    hist = stock_info.get("history")
-                    if not stock_info.get("price") or hist is None or hist.empty:
-                        st.error(f"❌ Could not fetch full data for {ticker}. Skipping.")
-                        continue
-                    
-                    if hist is None or hist.empty:
-                        st.warning(f"⚠️ No historical data for {ticker}. Displaying basic info only.")
-                    
-                    price_change = ((hist["Close"].iloc[-1] - hist["Close"].iloc[0]) / hist["Close"].iloc[0]) * 100
-                    
-                    # Price Chart
-                    st.markdown(f"### 📉 5-Day Price Trend for {ticker}")
-                    fig = go.Figure()
-                    fig.add_trace(go.Scatter(x=hist.index, y=hist["Close"], mode='lines+markers', name=f"{ticker} Price"))
-                    fig.update_layout(
-                        title=f"{ticker} 5-Day Price Trend",
-                        xaxis_title="Date", yaxis_title="Price ($)",
-                        hovermode="x unified", xaxis_tickangle=-45
-                    )
-                    st.plotly_chart(fig, use_container_width=True)
-                    
-                    # Headlines and Summary
-                    headlines = get_all_headlines(ticker)
-                    mood_text, summary_text = generate_stock_summary(
-                        ticker, stock_info["name"], stock_info["price"], price_change, headlines
-                    )
-                    
-                    mood_label = detect_macro_mood_label(mood_text)
-                    
-                    st.markdown("### 🧠 Macro Market Mood")
-                    if mood_label == "Risk-On":
-                        st.success(mood_text)
-                    elif mood_label == "Risk-Off":
-                        st.error(mood_text)
-                    else:
-                        st.info(mood_text)
-                    
-                    save_macro_mood(mood_text)
-                    
-                    st.markdown(f"### 📋 Stock Summary")
-                    st.markdown(f"**Price:** ${stock_info['price']} &nbsp;&nbsp;&nbsp; **5-Day Change:** {price_change:.2f}%")
-                    
-                    earnings_data = fetch_earnings_for_stock(ticker)
-                    eps_surprise_value = earnings_data.get("eps_surprise", None)
-                    
-                    if isinstance(eps_surprise_value, (int, float)):
-                        if eps_surprise_value > 0:
-                            earnings_result = "Beat"
-                            st.success(f"✅ EPS Surprise: {eps_surprise_value:+.2f}% (Beat)")
-                        elif eps_surprise_value < 0:
-                            earnings_result = "Miss"
-                            st.error(f"❌ EPS Surprise: {eps_surprise_value:+.2f}% (Miss)")
-                        else:
-                            earnings_result = "Neutral"
-                            st.info(f"ℹ️ EPS Surprise: {eps_surprise_value:+.2f}% (Neutral)")
+                    st.info(mood_text)
+
+                save_macro_mood(mood_text)
+
+                st.markdown(f"### 📋 Stock Summary")
+                st.markdown(f"**Price:** ${stock_info['price']} &nbsp;&nbsp;&nbsp; **5-Day Change:** {price_change:.2f}%")
+
+                earnings_data = fetch_earnings_for_stock(ticker)
+                eps_surprise_value = earnings_data.get("eps_surprise", None)
+
+                if isinstance(eps_surprise_value, (int, float)):
+                    if eps_surprise_value > 0:
+                        earnings_result = "Beat"
+                        st.success(f"✅ EPS Surprise: {eps_surprise_value:+.2f}% (Beat)")
+                    elif eps_surprise_value < 0:
+                        earnings_result = "Miss"
+                        st.error(f"❌ EPS Surprise: {eps_surprise_value:+.2f}% (Miss)")
                     else:
                         earnings_result = "Neutral"
-                    
-                    st.markdown(summary_text)
-                    
-                    with st.spinner("💭 Generating investment hypothesis..."):
-                        investment_hint = generate_investment_hypothesis(
-                            macro_mood=mood_label,
-                            earnings_result=earnings_result,
-                            price_trend_percent=price_change
-                        )
-                    
-                    st.markdown("### 💡 Investment Hypothesis")
-                    st.info(investment_hint)
-                    
-                    with st.spinner("🧠 Evaluating AI decision..."):
-                        decision, confidence, explanation = make_investment_decision(
-                            macro_mood=mood_label,
-                            earnings_result=earnings_result,
+                        st.info(f"ℹ️ EPS Surprise: {eps_surprise_value:+.2f}% (Neutral)")
+                else:
+                    earnings_result = "Neutral"
+
+                st.markdown(summary_text)
+
+                with st.spinner("💭 Generating investment hypothesis..."):
+                    investment_hint = generate_investment_hypothesis(
+                        macro_mood=mood_label,
+                        earnings_result=earnings_result,
+                        price_trend_percent=price_change
+                    )
+
+                st.markdown("### 💡 Investment Hypothesis")
+                st.info(investment_hint)
+
+                with st.spinner("🧠 Evaluating AI decision..."):
+                    decision, confidence, explanation = make_investment_decision(
+                        macro_mood=mood_label,
+                        earnings_result=earnings_result,
                             price_change=price_change,
                             ticker=ticker,
                             include_technical=True,
                             include_fundamental=True,
                             include_risk=True,
                             include_backtest=True
-                        )
-                    
-                    st.markdown("### 🤖 AI Investment Decision")
-                    st.success(f"**Decision: {decision}**  &nbsp;&nbsp;&nbsp; 🔍 **Confidence: {confidence}%**")
-                    st.markdown(explanation)
-        
-        else:
-            st.info("Select or surprise-pick a stock to see the summary.")
-    
+                    )
+
+                st.markdown("### 🤖 AI Investment Decision")
+                st.success(f"**Decision: {decision}**  &nbsp;&nbsp;&nbsp; 🔍 **Confidence: {confidence}%**")
+                st.markdown(explanation)
+
+    else:
+        st.info("Select or surprise-pick a stock to see the summary.")
+
     with tab5:
         st.header("🔬 Advanced Analysis")
         st.markdown("### 📈 Technical & Fundamental Analysis")
@@ -479,127 +479,117 @@ def main():
                     - Some analysis features may take a few moments to load
                     """)
     
-    with tab2:
-        st.header("💡 Get Investment Suggestions")
-        
-        if st.button("Suggest Top Stocks to Watch"):
-            with st.spinner("Fetching trending tickers and analyzing..."):
-                # 1. Fetch 10 trending stocks
-                trending = trending_stocks[:10]
-                
-                # 2. Display all 10 trending stocks
-                df = pd.DataFrame(trending, columns=["Ticker", "Company"])
-                st.markdown("### 🔥 Currently Trending Tickers")
-                st.dataframe(df, hide_index=True)
-                
-                # 3. Let user choose: Top 3 vs All 10
-                choice = st.radio(
-                    "📈 How many stocks would you like to get analysis on?",
-                    options=["Top 3 only", "All 10"],
-                    index=0
+with tab2:
+    st.header("💡 Get Investment Suggestions")
+
+    if st.button("Suggest Top Stocks to Watch"):
+        with st.spinner("Fetching trending tickers and analyzing..."):
+            # 1. Fetch 10 trending stocks
+            trending = trending_stocks[:10]
+
+            # 2. Display all 10 trending stocks
+            df = pd.DataFrame(trending, columns=["Ticker", "Company"])
+            st.markdown("### 🔥 Currently Trending Tickers")
+            st.dataframe(df, hide_index=True)
+
+            # 3. Let user choose: Top 3 vs All 10
+            choice = st.radio(
+                "📈 How many stocks would you like to get analysis on?",
+                options=["Top 3 only", "All 10"],
+                index=0
+            )
+
+            if choice == "Top 3 only":
+                selected = trending[:3]
+
+                trending_formatted = "\n".join([f"- {ticker} ({name})" for ticker, name in selected])
+                prompt = f"""
+            You are a stock market investment assistant.
+
+            Here are the trending stocks:
+            {trending_formatted}
+
+            For each stock above, briefly explain whether it's a good opportunity to watch or invest in now. 
+            Write 1–2 sentences for each. 
+            Respond in a clean readable bullet point format.
+            """
+                suggestions = suggest_stocks_to_watch(ticker_list=selected, custom_prompt=prompt)
+
+            else:
+                selected = trending[:10]  # go back to full 10
+                suggestions = suggest_stocks_to_watch(ticker_list=selected)  # NO custom_prompt for batching to work
+
+            # 5. Call GPT to generate suggestions
+            st.write(f"🧪 Sending {len(selected)} tickers to suggest_stocks_to_watch")
+
+            # Debugging GPT output
+            if choice == "Top 3 only":
+                st.markdown("### 🔍 Prompt Preview")
+                st.code(prompt)
+
+            if not suggestions:
+                st.error("⚠️ GPT returned an empty response.")
+            else:
+                st.markdown("### 🧠 GPT Watchlist Suggestions")
+                st.markdown(suggestions)
+
+with tab3:
+    st.header("📋 Compare Multiple Stocks Side by Side")
+
+    trending = trending_stocks[:10]
+    ticker_choices = [f"{sym} - {name}" for sym, name in trending]
+
+    selected_tickers = st.multiselect(
+        "Pick 2 or 3 stocks to compare:",
+        options=ticker_choices,
+        default=ticker_choices[:2],
+        max_selections=3
+    )
+
+    tickers_only = [s.split(" - ")[0] for s in selected_tickers]
+
+    if len(tickers_only) >= 2:
+        cols = st.columns(len(tickers_only))
+        summaries = []
+        all_headlines = []
+
+        for idx, ticker in enumerate(tickers_only):
+            with cols[idx]:
+                st.subheader(f"📈 {ticker}")
+                stock_info = get_cached_stock_summary(ticker)
+                headlines = get_all_headlines(ticker)
+                all_headlines.append((ticker, headlines))
+
+                hist = stock_info.get("history")
+                if hist is None or hist.empty:
+                    st.error(f"⚠️ No data for {ticker}")
+                    continue
+
+                price_change = ((hist["Close"].iloc[-1] - hist["Close"].iloc[0]) / hist["Close"].iloc[0]) * 100
+
+                summary = generate_stock_summary(
+                    ticker,
+                    stock_info["name"],
+                    stock_info["price"],
+                    price_change,
+                    headlines
                 )
-                
-                if choice == "Top 3 only":
-                    selected = trending[:3]
-                    
-                    trending_formatted = "\n".join([f"- {ticker} ({name})" for ticker, name in selected])
-                    prompt = f"""
-                You are a stock market investment assistant.
-                
-                Here are the trending stocks:
-                {trending_formatted}
-                
-                For each stock above, briefly explain whether it's a good opportunity to watch or invest in now. 
-                Write 1–2 sentences for each. 
-                Respond in a clean readable bullet point format.
-                """
-                    suggestions = suggest_stocks_to_watch(ticker_list=selected, custom_prompt=prompt)
-                
-                else:
-                    selected = trending[:10]  # go back to full 10
-                    suggestions = suggest_stocks_to_watch(ticker_list=selected)  # NO custom_prompt for batching to work
-                
-                # 5. Call GPT to generate suggestions
-                st.write(f"🧪 Sending {len(selected)} tickers to suggest_stocks_to_watch")
-                
-                # Debugging GPT output
-                if choice == "Top 3 only":
-                    st.markdown("### 🔍 Prompt Preview")
-                    st.code(prompt)
-                
-                if not suggestions:
-                    st.error("⚠️ GPT returned an empty response.")
-                else:
-                    st.markdown("### 🧠 GPT Watchlist Suggestions")
-                    st.markdown(suggestions)
-    
-    with tab3:
-        st.header("📋 Compare Multiple Stocks Side by Side")
-        
-        trending = trending_stocks[:10]
-        ticker_choices = [f"{sym} - {name}" for sym, name in trending]
-        
-        selected_tickers = st.multiselect(
-            "Pick 2 or 3 stocks to compare:",
-            options=ticker_choices,
-            default=ticker_choices[:2],
-            max_selections=3
-        )
-        
-        tickers_only = [s.split(" - ")[0] for s in selected_tickers]
-        
+                summaries.append((ticker, summary))
+                st.markdown(summary)
+
+        # Add GPT risk comparison section
         if len(tickers_only) >= 2:
-            cols = st.columns(len(tickers_only))
-            summaries = []
-            all_headlines = []
-            
-            for idx, ticker in enumerate(tickers_only):
-                with cols[idx]:
-                    st.subheader(f"📈 {ticker}")
-                    stock_info = get_cached_stock_summary(ticker)
-                    headlines = get_all_headlines(ticker)
-                    all_headlines.append((ticker, headlines))
-                    
-                    hist = stock_info.get("history")
-                    if hist is None or hist.empty:
-                        st.error(f"⚠️ No data for {ticker}")
-                        continue
-                    
-                    price_change = ((hist["Close"].iloc[-1] - hist["Close"].iloc[0]) / hist["Close"].iloc[0]) * 100
-                    
-                    summary = generate_stock_summary(
-                        ticker,
-                        stock_info["name"],
-                        stock_info["price"],
-                        price_change,
-                        headlines
-                    )
-                    summaries.append((ticker, summary))
-                    st.markdown(summary)
-            
-            # Add GPT risk comparison section
-            if len(tickers_only) >= 2:
-                # Email + PDF export
-                st.markdown("### 📩 Email Report")
-                email = st.text_input("Enter your email to receive this as a PDF report")
-                if st.button("📥 Send PDF Report"):
-                    if summaries and email:
-                        filename = f"stock_report_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
-                        generate_pdf_report(summaries, "", filename)
-                        
-                        success = send_email_with_attachment(
-                            to_email=email,
-                            subject="📊 Your AI Stock Comparison Report",
-                            message="Attached is your AI-generated stock and risk summary.",
-                            file_path=filename
-                        )
-                        
-                        if success:
-                            st.success(f"✅ Report sent to {email}")
-                        else:
-                            st.error("❌ Failed to send the email. Check your SendGrid setup or API key.")
-                    else:
-                        st.warning("Please make sure you selected at least 2 stocks and entered an email.")
+            # Email + PDF export
+            st.markdown("### 📩 Email Report")
+            email = st.text_input("Enter your email to receive this as a PDF report")
+                # PDF and email features temporarily disabled for cloud deployment
+                st.info("📧 **PDF Report & Email features are temporarily disabled for cloud deployment**")
+                st.markdown("""
+                **Alternative options:**
+                - Copy the analysis text above
+                - Take screenshots of the charts
+                - Use the data tables for your records
+                """)
     
     with tab4:
         st.header("💰 Portfolio Allocator")
@@ -1092,7 +1082,7 @@ def main():
                         st.error("❌ Failed to calculate allocation. Please check your inputs.")
             else:
                 st.error("❌ Failed to fetch current prices. Please check your stock symbols.")
-        else:
+                else:
             if not selected_symbols:
                 st.info("ℹ️ Please select some stocks to allocate.")
             if budget <= 0:
