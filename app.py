@@ -423,7 +423,7 @@ with tab1:
                                 "Strength": "N/A"
                             })
                         
-                        st.dataframe(pd.DataFrame(tech_data), use_container_width=True)
+                        st.dataframe(pd.DataFrame(tech_data), use_container_width=True, hide_index=True)
                     else:
                         st.error(f"Technical analysis error: {technical_signals.get('error', 'Unknown error')}")
                     
@@ -462,7 +462,7 @@ with tab1:
                         
                         col1, col2 = st.columns(2)
                         with col1:
-                            st.dataframe(pd.DataFrame(val_data), use_container_width=True)
+                            st.dataframe(pd.DataFrame(val_data), use_container_width=True, hide_index=True)
                         
                         # Show financial ratios
                         financial_ratios = fundamental_analysis.get('financial_ratios', {})
@@ -482,7 +482,7 @@ with tab1:
                         })
                         
                         with col2:
-                            st.dataframe(pd.DataFrame(ratio_data), use_container_width=True)
+                            st.dataframe(pd.DataFrame(ratio_data), use_container_width=True, hide_index=True)
                     else:
                         st.error(f"Fundamental analysis error: {fundamental_analysis.get('error', 'Unknown error')}")
                     
@@ -995,7 +995,7 @@ with tab3:
                         price_data.append({"Ticker": ticker, "Current Price": f"${price:.2f}"})
                 
                 if price_data:
-                    st.dataframe(pd.DataFrame(price_data), use_container_width=True)
+                    st.dataframe(pd.DataFrame(price_data), use_container_width=True, hide_index=True)
                 
                 # Market Insights and Weight Recommendations
                 st.markdown("### 🧠 AI Weight Recommendations")
@@ -1014,7 +1014,7 @@ with tab3:
                         "Market Insights": insights.get(ticker, "📊 Data unavailable")
                     })
                 
-                st.dataframe(pd.DataFrame(insight_data), use_container_width=True)
+                st.dataframe(pd.DataFrame(insight_data), use_container_width=True, hide_index=True)
                 
                 # Weight recommendation section
                 st.markdown("### ⚖️ Portfolio Weights")
@@ -1039,7 +1039,7 @@ with tab3:
                             "Reasoning": insights.get(ticker, "📊 Standard allocation")
                         })
                     
-                    st.dataframe(pd.DataFrame(weight_data), use_container_width=True)
+                    st.dataframe(pd.DataFrame(weight_data), use_container_width=True, hide_index=True)
                     
                     # Use recommended weights for allocation
                     custom_weights = recommended_weights

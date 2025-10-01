@@ -274,12 +274,12 @@ def allocate_portfolio_with_sector_preference(
             "is_tech": is_tech
         })
     
-    # Budget redistribution: Try to use unused budget more efficiently
+    # Enhanced budget redistribution: Try to use unused budget more efficiently
     unused_budget = budget - total_allocated
-    if unused_budget > budget * 0.1:  # If more than 10% unused
+    if unused_budget > budget * 0.05:  # If more than 5% unused (more aggressive)
         print(f"Debug - Attempting budget redistribution for unused ${unused_budget:.2f}")
         
-        # Find stocks that could use more budget (those with 0 shares but fractional potential)
+        # Strategy 1: Find stocks that could use more budget (those with 0 shares but fractional potential)
         redistributable = []
         for item in allocation:
             if item['shares'] == 0 and item['fractional_shares'] > 0:
@@ -313,6 +313,48 @@ def allocate_portfolio_with_sector_preference(
                         unused_budget -= actual_additional
                         print(f"Debug - Redistributed ${actual_additional:.2f} to {redist_item['ticker']} (${additional_shares} shares)")
                         break
+        
+        # Strategy 2: If still unused budget, try to add more shares to existing positions
+        if unused_budget > budget * 0.05:  # Still more than 5% unused
+            print(f"Debug - Still ${unused_budget:.2f} unused, trying to add more shares to existing positions")
+            
+            # Find stocks that already have shares and could use more
+            expandable = []
+            for item in allocation:
+                if item['shares'] > 0 and item['price'] > 0:
+                    # Calculate how many more shares we could buy
+                    max_additional_shares = int(unused_budget // item['price'])
+                    if max_additional_shares > 0:
+                        expandable.append({
+                            'ticker': item['ticker'],
+                            'price': item['price'],
+                            'current_shares': item['shares'],
+                            'max_additional_shares': max_additional_shares,
+                            'max_additional_cost': max_additional_shares * item['price']
+                        })
+            
+            # Sort by cost efficiency (cheaper stocks first)
+            expandable.sort(key=lambda x: x['price'])
+            
+            # Add shares to existing positions
+            for expand_item in expandable:
+                if unused_budget <= 0:
+                    break
+                    
+                # Calculate how many shares we can actually add
+                shares_to_add = min(expand_item['max_additional_shares'], int(unused_budget // expand_item['price']))
+                cost_to_add = shares_to_add * expand_item['price']
+                
+                if cost_to_add > 0:
+                    # Update the allocation
+                    for item in allocation:
+                        if item['ticker'] == expand_item['ticker']:
+                            item['shares'] += shares_to_add
+                            item['allocated'] += cost_to_add
+                            total_allocated += cost_to_add
+                            unused_budget -= cost_to_add
+                            print(f"Debug - Added {shares_to_add} more shares to {expand_item['ticker']} for ${cost_to_add:.2f}")
+                            break
     
     # Add debug information
     print(f"Debug - Budget: ${budget}, Total Allocated: ${total_allocated:.2f}")
