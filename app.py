@@ -542,14 +542,12 @@ with tab2:
             st.markdown("### 🔥 Currently Trending Tickers")
             st.dataframe(df, hide_index=True)
 
-            # 3. Use session state to prevent jumping completely
+            # 3. Use st.empty() containers to prevent jumping
             st.markdown("**📈 Choose your analysis option:**")
             
-            # Initialize session state
-            if 'analysis_requested' not in st.session_state:
-                st.session_state.analysis_requested = False
-            if 'analysis_type' not in st.session_state:
-                st.session_state.analysis_type = None
+            # Create empty containers for results
+            if 'result_container' not in st.session_state:
+                st.session_state.result_container = st.empty()
             
             choice = st.radio(
                 "Select analysis type:",
@@ -557,18 +555,14 @@ with tab2:
                 key="analysis_choice_radio"
             )
             
-            # Use session state to track button clicks without rerun
+            # Simple button approach with empty container
             if st.button("🚀 Generate Analysis", key="generate_btn", use_container_width=True):
-                st.session_state.analysis_requested = True
-                st.session_state.analysis_type = choice
-                st.rerun()
-            
-            # Process analysis based on session state (no button rerun)
-            if st.session_state.analysis_requested and st.session_state.analysis_type:
-                st.write("🔍 DEBUG: Processing analysis request...")
-                st.write(f"🔍 DEBUG: Analysis type: {st.session_state.analysis_type}")
+                # Clear previous results
+                st.session_state.result_container.empty()
                 
-                if st.session_state.analysis_type == "🔝 Top 3 Only":
+                st.write("🔍 DEBUG: Button clicked, starting analysis...")
+                
+                if choice == "🔝 Top 3 Only":
                     st.write("🔍 DEBUG: Processing Top 3...")
                     selected = trending[:3]
                     st.write(f"🔍 DEBUG: Selected stocks: {selected}")
@@ -590,23 +584,16 @@ with tab2:
                     
                     st.write(f"🔍 DEBUG: GPT Response length: {len(suggestions) if suggestions else 0}")
                     
-                    # Store results in session state
-                    st.session_state.analysis_results = suggestions
-                    st.session_state.analysis_choice = "Top 3 only"
-                    
-                    # Display results
-                    if suggestions:
-                        st.markdown("### 🧠 GPT Watchlist Suggestions")
-                        st.markdown(suggestions)
-                        st.info("📊 Analysis for Top 3 trending stocks")
-                    else:
-                        st.error("⚠️ GPT returned an empty response.")
-                    
-                    # Reset request
-                    st.session_state.analysis_requested = False
-                    st.session_state.analysis_type = None
+                    # Display results in empty container
+                    with st.session_state.result_container.container():
+                        if suggestions:
+                            st.markdown("### 🧠 GPT Watchlist Suggestions")
+                            st.markdown(suggestions)
+                            st.info("📊 Analysis for Top 3 trending stocks")
+                        else:
+                            st.error("⚠️ GPT returned an empty response.")
                 
-                elif st.session_state.analysis_type == "📊 All 10 Stocks":
+                else:  # All 10 Stocks
                     st.write("🔍 DEBUG: Processing All 10...")
                     selected = trending[:10]
                     st.write(f"🔍 DEBUG: Selected stocks: {selected}")
@@ -617,21 +604,14 @@ with tab2:
                     
                     st.write(f"🔍 DEBUG: GPT Response length: {len(suggestions) if suggestions else 0}")
                     
-                    # Store results in session state
-                    st.session_state.analysis_results = suggestions
-                    st.session_state.analysis_choice = "All 10"
-                    
-                    # Display results
-                    if suggestions:
-                        st.markdown("### 🧠 GPT Watchlist Suggestions")
-                        st.markdown(suggestions)
-                        st.info("📊 Analysis for All 10 trending stocks")
-                    else:
-                        st.error("⚠️ GPT returned an empty response.")
-                    
-                    # Reset request
-                    st.session_state.analysis_requested = False
-                    st.session_state.analysis_type = None
+                    # Display results in empty container
+                    with st.session_state.result_container.container():
+                        if suggestions:
+                            st.markdown("### 🧠 GPT Watchlist Suggestions")
+                            st.markdown(suggestions)
+                            st.info("📊 Analysis for All 10 trending stocks")
+                        else:
+                            st.error("⚠️ GPT returned an empty response.")
 
             # Also display any existing results from session state
             if 'analysis_results' in st.session_state and st.session_state.analysis_results:
