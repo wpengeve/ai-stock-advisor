@@ -154,10 +154,10 @@ def generate_portfolio_pdf(allocation_data, budget, tech_preference):
 
 
 def main():
-    st.set_page_config(page_title="AI Stock Advisor", page_icon="📈")
+st.set_page_config(page_title="AI Stock Advisor", page_icon="📈")
 
-st.title("🤖 AI Stock Advisor")
-st.markdown("Your LLM-powered assistant for investment research")
+    st.title("🤖 AI Stock Advisor")
+    st.markdown("Your LLM-powered assistant for investment research")
     
     # Add startup message
     st.success("🚀 **AI Stock Advisor is ready!** Enhanced with technical analysis, fundamental analysis, risk management, and backtesting capabilities.")
