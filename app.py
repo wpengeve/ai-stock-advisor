@@ -542,12 +542,8 @@ with tab2:
             st.markdown("### 🔥 Currently Trending Tickers")
             st.dataframe(df, hide_index=True)
 
-            # 3. Use st.empty() containers to prevent jumping
+            # 3. Automatic analysis - no button needed
             st.markdown("**📈 Choose your analysis option:**")
-            
-            # Create empty containers for results
-            if 'result_container' not in st.session_state:
-                st.session_state.result_container = st.empty()
             
             choice = st.radio(
                 "Select analysis type:",
@@ -555,63 +551,55 @@ with tab2:
                 key="analysis_choice_radio"
             )
             
-            # Simple button approach with empty container
-            if st.button("🚀 Generate Analysis", key="generate_btn", use_container_width=True):
-                # Clear previous results
-                st.session_state.result_container.empty()
+            # Automatic analysis based on choice
+            if choice == "🔝 Top 3 Only":
+                st.write("🔍 DEBUG: Processing Top 3 automatically...")
+                selected = trending[:3]
+                st.write(f"🔍 DEBUG: Selected stocks: {selected}")
                 
-                st.write("🔍 DEBUG: Button clicked, starting analysis...")
-                
-                if choice == "🔝 Top 3 Only":
-                    st.write("🔍 DEBUG: Processing Top 3...")
-                    selected = trending[:3]
-                    st.write(f"🔍 DEBUG: Selected stocks: {selected}")
-                    
-                    trending_formatted = "\n".join([f"- {ticker} ({name})" for ticker, name in selected])
-                    prompt = f"""
-                You are a stock market investment assistant.
+                trending_formatted = "\n".join([f"- {ticker} ({name})" for ticker, name in selected])
+                prompt = f"""
+            You are a stock market investment assistant.
 
-                Here are the trending stocks:
-                {trending_formatted}
+            Here are the trending stocks:
+            {trending_formatted}
 
-                For each stock above, briefly explain whether it's a good opportunity to watch or invest in now. 
-                Write 1–2 sentences for each. 
-                Respond in a clean readable bullet point format.
-                """
-                    st.write("🔍 DEBUG: Calling GPT API...")
-                    with st.spinner("💭 Generating analysis for Top 3 stocks..."):
-                        suggestions = suggest_stocks_to_watch(ticker_list=selected, custom_prompt=prompt)
-                    
-                    st.write(f"🔍 DEBUG: GPT Response length: {len(suggestions) if suggestions else 0}")
-                    
-                    # Display results in empty container
-                    with st.session_state.result_container.container():
-                        if suggestions:
-                            st.markdown("### 🧠 GPT Watchlist Suggestions")
-                            st.markdown(suggestions)
-                            st.info("📊 Analysis for Top 3 trending stocks")
-                        else:
-                            st.error("⚠️ GPT returned an empty response.")
+            For each stock above, briefly explain whether it's a good opportunity to watch or invest in now. 
+            Write 1–2 sentences for each. 
+            Respond in a clean readable bullet point format.
+            """
+                st.write("🔍 DEBUG: Calling GPT API...")
+                with st.spinner("💭 Generating analysis for Top 3 stocks..."):
+                    suggestions = suggest_stocks_to_watch(ticker_list=selected, custom_prompt=prompt)
                 
-                else:  # All 10 Stocks
-                    st.write("🔍 DEBUG: Processing All 10...")
-                    selected = trending[:10]
-                    st.write(f"🔍 DEBUG: Selected stocks: {selected}")
-                    
-                    st.write("🔍 DEBUG: Calling GPT API...")
-                    with st.spinner("💭 Generating analysis for All 10 stocks..."):
-                        suggestions = suggest_stocks_to_watch(ticker_list=selected)
-                    
-                    st.write(f"🔍 DEBUG: GPT Response length: {len(suggestions) if suggestions else 0}")
-                    
-                    # Display results in empty container
-                    with st.session_state.result_container.container():
-                        if suggestions:
-                            st.markdown("### 🧠 GPT Watchlist Suggestions")
-                            st.markdown(suggestions)
-                            st.info("📊 Analysis for All 10 trending stocks")
-                        else:
-                            st.error("⚠️ GPT returned an empty response.")
+                st.write(f"🔍 DEBUG: GPT Response length: {len(suggestions) if suggestions else 0}")
+                
+                # Display results
+                if suggestions:
+                    st.markdown("### 🧠 GPT Watchlist Suggestions")
+                    st.markdown(suggestions)
+                    st.info("📊 Analysis for Top 3 trending stocks")
+                else:
+                    st.error("⚠️ GPT returned an empty response.")
+            
+            else:  # All 10 Stocks
+                st.write("🔍 DEBUG: Processing All 10 automatically...")
+                selected = trending[:10]
+                st.write(f"🔍 DEBUG: Selected stocks: {selected}")
+                
+                st.write("🔍 DEBUG: Calling GPT API...")
+                with st.spinner("💭 Generating analysis for All 10 stocks..."):
+                    suggestions = suggest_stocks_to_watch(ticker_list=selected)
+                
+                st.write(f"🔍 DEBUG: GPT Response length: {len(suggestions) if suggestions else 0}")
+                
+                # Display results
+                if suggestions:
+                    st.markdown("### 🧠 GPT Watchlist Suggestions")
+                    st.markdown(suggestions)
+                    st.info("📊 Analysis for All 10 trending stocks")
+                else:
+                    st.error("⚠️ GPT returned an empty response.")
 
             # Also display any existing results from session state
             if 'analysis_results' in st.session_state and st.session_state.analysis_results:
