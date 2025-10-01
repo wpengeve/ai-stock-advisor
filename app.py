@@ -546,37 +546,49 @@ with tab2:
             choice = st.radio(
                 "📈 How many stocks would you like to get analysis on?",
                 options=["Top 3 only", "All 10"],
-                index=0
+                index=0,
+                key="stock_choice_radio"
             )
 
-            if choice == "Top 3 only":
-                selected = trending[:3]
+            # Use session state to manage suggestions and prevent jumping
+            if 'last_choice' not in st.session_state:
+                st.session_state.last_choice = None
+            if 'suggestions' not in st.session_state:
+                st.session_state.suggestions = None
+            if 'current_choice' not in st.session_state:
+                st.session_state.current_choice = choice
 
-                trending_formatted = "\n".join([f"- {ticker} ({name})" for ticker, name in selected])
-                prompt = f"""
-            You are a stock market investment assistant.
+            # Only regenerate if choice changed
+            if st.session_state.current_choice != choice or st.session_state.suggestions is None:
+                st.session_state.current_choice = choice
+                
+                if choice == "Top 3 only":
+                    selected = trending[:3]
+                    trending_formatted = "\n".join([f"- {ticker} ({name})" for ticker, name in selected])
+                    prompt = f"""
+                You are a stock market investment assistant.
 
-            Here are the trending stocks:
-            {trending_formatted}
+                Here are the trending stocks:
+                {trending_formatted}
 
-            For each stock above, briefly explain whether it's a good opportunity to watch or invest in now. 
-            Write 1–2 sentences for each. 
-            Respond in a clean readable bullet point format.
-            """
-                suggestions = suggest_stocks_to_watch(ticker_list=selected, custom_prompt=prompt)
+                For each stock above, briefly explain whether it's a good opportunity to watch or invest in now. 
+                Write 1–2 sentences for each. 
+                Respond in a clean readable bullet point format.
+                """
+                    with st.spinner("💭 Generating analysis for Top 3 stocks..."):
+                        st.session_state.suggestions = suggest_stocks_to_watch(ticker_list=selected, custom_prompt=prompt)
 
-            else:
-                selected = trending[:10]  # go back to full 10
-                suggestions = suggest_stocks_to_watch(ticker_list=selected)  # NO custom_prompt for batching to work
+                else:
+                    selected = trending[:10]
+                    with st.spinner("💭 Generating analysis for All 10 stocks..."):
+                        st.session_state.suggestions = suggest_stocks_to_watch(ticker_list=selected)
 
-            # 5. Call GPT to generate suggestions
-
-
-            if not suggestions:
+            # Display results
+            if not st.session_state.suggestions:
                 st.error("⚠️ GPT returned an empty response.")
             else:
                 st.markdown("### 🧠 GPT Watchlist Suggestions")
-                st.markdown(suggestions)
+                st.markdown(st.session_state.suggestions)
 
 with tab3:
     st.header("📋 Compare Multiple Stocks Side by Side")
