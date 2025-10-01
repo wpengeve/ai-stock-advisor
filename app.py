@@ -559,12 +559,9 @@ with tab2:
     # Check if choice changed and process accordingly
     if choice != st.session_state.last_analysis_choice:
         st.session_state.last_analysis_choice = choice
-        st.write(f"🔄 Choice changed to: {choice}")
         
         if choice == "🔝 Top 3 Only":
-            st.write("🔍 DEBUG: Processing Top 3...")
             selected = trending[:3]
-            st.write(f"🔍 DEBUG: Selected stocks: {selected}")
             
             trending_formatted = "\n".join([f"- {ticker} ({name})" for ticker, name in selected])
             prompt = f"""
@@ -577,11 +574,8 @@ with tab2:
         Write 1–2 sentences for each. 
         Respond in a clean readable bullet point format.
         """
-            st.write("🔍 DEBUG: Calling GPT API...")
             with st.spinner("💭 Generating analysis for Top 3 stocks..."):
                 suggestions = suggest_stocks_to_watch(ticker_list=selected, custom_prompt=prompt)
-            
-            st.write(f"🔍 DEBUG: GPT Response length: {len(suggestions) if suggestions else 0}")
             
             # Store results in session state
             st.session_state.analysis_results = suggestions
@@ -595,11 +589,9 @@ with tab2:
                 st.error("⚠️ GPT returned an empty response.")
         
         else:  # All 10 Stocks
-            st.write("🔍 DEBUG: Processing All 10...")
             selected = trending[:10]
-            st.write(f"🔍 DEBUG: Selected stocks: {selected}")
             
-            # Try direct GPT call instead of using suggest_stocks_to_watch function
+            # Direct GPT call for All 10
             trending_formatted = "\n".join([f"- {ticker} ({name})" for ticker, name in selected])
             prompt = f"""
         You are a stock market investment assistant.
@@ -612,7 +604,6 @@ with tab2:
         Respond in a clean readable bullet point format.
         """
             
-            st.write("🔍 DEBUG: Making direct GPT API call...")
             with st.spinner("💭 Generating analysis for All 10 stocks..."):
                 try:
                     from utils.llm import client
@@ -627,10 +618,7 @@ with tab2:
                     )
                     suggestions = response.choices[0].message.content.strip()
                 except Exception as e:
-                    st.write(f"🔍 DEBUG: GPT Error: {e}")
                     suggestions = f"❌ GPT Error: {e}"
-            
-            st.write(f"🔍 DEBUG: GPT Response length: {len(suggestions) if suggestions else 0}")
             
             # Store results in session state
             st.session_state.analysis_results = suggestions
