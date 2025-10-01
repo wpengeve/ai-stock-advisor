@@ -1082,7 +1082,6 @@ with tab3:
                         st.error("❌ Failed to calculate allocation. Please check your inputs.")
             else:
                 st.error("❌ Failed to fetch current prices. Please check your stock symbols.")
-                else:
             if not selected_symbols:
                 st.info("ℹ️ Please select some stocks to allocate.")
             if budget <= 0:
