@@ -567,6 +567,14 @@ with tab2:
                     # Store results in session state
                     st.session_state.analysis_results = suggestions
                     st.session_state.analysis_choice = "Top 3 only"
+                    
+                    # Display results immediately
+                    if suggestions:
+                        st.markdown("### 🧠 GPT Watchlist Suggestions")
+                        st.markdown(suggestions)
+                        st.info("📊 Analysis for Top 3 trending stocks")
+                    else:
+                        st.error("⚠️ GPT returned an empty response.")
 
             with col2:
                 if st.button("📊 All 10 Stocks", key="all10_btn", use_container_width=True):
@@ -577,8 +585,16 @@ with tab2:
                     # Store results in session state
                     st.session_state.analysis_results = suggestions
                     st.session_state.analysis_choice = "All 10"
+                    
+                    # Display results immediately
+                    if suggestions:
+                        st.markdown("### 🧠 GPT Watchlist Suggestions")
+                        st.markdown(suggestions)
+                        st.info("📊 Analysis for All 10 trending stocks")
+                    else:
+                        st.error("⚠️ GPT returned an empty response.")
 
-            # Display results from session state (outside form to prevent jumping)
+            # Also display any existing results from session state
             if 'analysis_results' in st.session_state and st.session_state.analysis_results:
                 st.markdown("### 🧠 GPT Watchlist Suggestions")
                 st.markdown(st.session_state.analysis_results)
