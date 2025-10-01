@@ -27,6 +27,56 @@ from data_sources.earnings_reports import fetch_earnings_for_stock
 from data_sources.stock_prices import get_cached_stock_summary
 from portfolio.portfolio_allocator import fetch_current_prices, allocate_portfolio, allocate_portfolio_with_sector_preference, search_companies, get_popular_stocks, generate_weight_recommendations, get_market_insights, get_stock_sectors
 
+# Company name to ticker mapping for auto-recognition
+COMPANY_TO_TICKER = {
+    'APPLE': 'AAPL',
+    'MICROSOFT': 'MSFT', 
+    'GOOGLE': 'GOOGL',
+    'ALPHABET': 'GOOGL',
+    'AMAZON': 'AMZN',
+    'TESLA': 'TSLA',
+    'META': 'META',
+    'FACEBOOK': 'META',
+    'NETFLIX': 'NFLX',
+    'NVIDIA': 'NVDA',
+    'TARGET': 'TGT',
+    'WALMART': 'WMT',
+    'COSTCO': 'COST',
+    'HOME DEPOT': 'HD',
+    'LOWES': 'LOW',
+    'BOEING': 'BA',
+    'JOHNSON & JOHNSON': 'JNJ',
+    'JPMORGAN': 'JPM',
+    'JPMORGAN CHASE': 'JPM',
+    'BANK OF AMERICA': 'BAC',
+    'WELLS FARGO': 'WFC',
+    'VISA': 'V',
+    'MASTERCARD': 'MA',
+    'PAYPAL': 'PYPL',
+    'ADOBE': 'ADBE',
+    'SALESFORCE': 'CRM',
+    'ORACLE': 'ORCL',
+    'INTEL': 'INTC',
+    'CISCO': 'CSCO',
+    'IBM': 'IBM',
+    'VERIZON': 'VZ',
+    'AT&T': 'T',
+    'COCA COLA': 'KO',
+    'PEPSI': 'PEP',
+    'MCDONALDS': 'MCD',
+    'STARBUCKS': 'SBUX',
+    'NIKE': 'NKE',
+    'DISNEY': 'DIS',
+    'COMCAST': 'CMCSA',
+    'GENERAL ELECTRIC': 'GE',
+    '3M': 'MMM',
+    'PROCTER & GAMBLE': 'PG',
+    'UNILEVER': 'UL',
+    'CHEVRON': 'CVX',
+    'EXXON': 'XOM',
+    'EXXON MOBIL': 'XOM'
+}
+
 # Cache functions for better performance
 @st.cache_data(ttl=3600)  # Cache for 1 hour instead of default
 def cached_search_companies(query: str, max_results: int = 10):
@@ -649,7 +699,8 @@ with tab3:
             
             with input_tab1:
                 st.markdown("**Add multiple stocks at once:**")
-                st.markdown("Type tickers directly (AAPL, MSFT) or company names (Apple, Target) - separate with commas")
+                st.markdown("Type tickers directly (AAPL, MSFT) or company names (Apple, Target, Amazon) - separate with commas")
+                st.markdown("💡 **Auto-recognition**: Common company names like Apple, Target, Amazon are automatically mapped to their tickers!")
                 
                 # Show currently selected stocks
                 if st.session_state.selected_stocks:
@@ -694,7 +745,7 @@ with tab3:
                         for item in items:
                             item_upper = item.upper().strip()
                             
-                            # Check if it's a valid ticker (optimized validation)
+                            # First check if it's a valid ticker (optimized validation)
                             if (len(item_upper) <= 5 and 
                                 item_upper.isalpha() and 
                                 item_upper in popular_tickers):
@@ -702,6 +753,12 @@ with tab3:
                                 if item_upper not in st.session_state.selected_stocks:
                                     st.session_state.selected_stocks.append(item_upper)
                                     added_stocks.append(item_upper)
+                            # Check if it's a known company name (auto-recognition)
+                            elif item_upper in COMPANY_TO_TICKER:
+                                ticker = COMPANY_TO_TICKER[item_upper]
+                                if ticker not in st.session_state.selected_stocks:
+                                    st.session_state.selected_stocks.append(ticker)
+                                    added_stocks.append(ticker)
                             else:
                                 # Company name for search
                                 search_needed.append(item)
