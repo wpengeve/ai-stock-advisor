@@ -542,42 +542,41 @@ with tab2:
             st.markdown("### 🔥 Currently Trending Tickers")
             st.dataframe(df, hide_index=True)
 
-            # 3. Use form to prevent reruns and jumping
-            with st.form("analysis_form", clear_on_submit=False):
-                choice = st.radio(
-                    "📈 How many stocks would you like to get analysis on?",
-                    options=["Top 3 only", "All 10"],
-                    index=0,
-                    key="stock_choice_radio"
-                )
-                
-                submitted = st.form_submit_button("🚀 Generate Analysis")
-                
-                if submitted:
-                    if choice == "Top 3 only":
-                        selected = trending[:3]
-                        trending_formatted = "\n".join([f"- {ticker} ({name})" for ticker, name in selected])
-                        prompt = f"""
-                    You are a stock market investment assistant.
+            # 3. Use separate buttons instead of radio button to prevent jumping
+            st.markdown("**📈 Choose your analysis option:**")
+            
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                if st.button("🔝 Top 3 Only", key="top3_btn", use_container_width=True):
+                    selected = trending[:3]
+                    trending_formatted = "\n".join([f"- {ticker} ({name})" for ticker, name in selected])
+                    prompt = f"""
+                You are a stock market investment assistant.
 
-                    Here are the trending stocks:
-                    {trending_formatted}
+                Here are the trending stocks:
+                {trending_formatted}
 
-                    For each stock above, briefly explain whether it's a good opportunity to watch or invest in now. 
-                    Write 1–2 sentences for each. 
-                    Respond in a clean readable bullet point format.
-                    """
-                        with st.spinner("💭 Generating analysis for Top 3 stocks..."):
-                            suggestions = suggest_stocks_to_watch(ticker_list=selected, custom_prompt=prompt)
-
-                    else:
-                        selected = trending[:10]
-                        with st.spinner("💭 Generating analysis for All 10 stocks..."):
-                            suggestions = suggest_stocks_to_watch(ticker_list=selected)
-
+                For each stock above, briefly explain whether it's a good opportunity to watch or invest in now. 
+                Write 1–2 sentences for each. 
+                Respond in a clean readable bullet point format.
+                """
+                    with st.spinner("💭 Generating analysis for Top 3 stocks..."):
+                        suggestions = suggest_stocks_to_watch(ticker_list=selected, custom_prompt=prompt)
+                    
                     # Store results in session state
                     st.session_state.analysis_results = suggestions
-                    st.session_state.analysis_choice = choice
+                    st.session_state.analysis_choice = "Top 3 only"
+
+            with col2:
+                if st.button("📊 All 10 Stocks", key="all10_btn", use_container_width=True):
+                    selected = trending[:10]
+                    with st.spinner("💭 Generating analysis for All 10 stocks..."):
+                        suggestions = suggest_stocks_to_watch(ticker_list=selected)
+                    
+                    # Store results in session state
+                    st.session_state.analysis_results = suggestions
+                    st.session_state.analysis_choice = "All 10"
 
             # Display results from session state (outside form to prevent jumping)
             if 'analysis_results' in st.session_state and st.session_state.analysis_results:
