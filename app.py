@@ -154,7 +154,7 @@ def generate_portfolio_pdf(allocation_data, budget, tech_preference):
 
 
 def main():
-st.set_page_config(page_title="AI Stock Advisor", page_icon="📈")
+    st.set_page_config(page_title="AI Stock Advisor", page_icon="📈")
 
 st.title("🤖 AI Stock Advisor")
 st.markdown("Your LLM-powered assistant for investment research")
@@ -478,7 +478,7 @@ with tab1:
                     - Try refreshing the page if the error persists
                     - Some analysis features may take a few moments to load
                     """)
-    
+
 with tab2:
     st.header("💡 Get Investment Suggestions")
 
