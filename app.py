@@ -550,10 +550,8 @@ with tab2:
                 key="stock_choice_radio"
             )
 
-            # Create a container to hold results and prevent jumping
-            results_container = st.container()
-            
-            with results_container:
+            # Add a button to trigger analysis (prevents automatic reruns and jumping)
+            if st.button("🚀 Generate Analysis", key="generate_analysis_btn"):
                 if choice == "Top 3 only":
                     selected = trending[:3]
                     trending_formatted = "\n".join([f"- {ticker} ({name})" for ticker, name in selected])
@@ -575,12 +573,20 @@ with tab2:
                     with st.spinner("💭 Generating analysis for All 10 stocks..."):
                         suggestions = suggest_stocks_to_watch(ticker_list=selected)
 
-                # Display results
-                if not suggestions:
-                    st.error("⚠️ GPT returned an empty response.")
+                # Store results in session state
+                st.session_state.analysis_results = suggestions
+                st.session_state.analysis_choice = choice
+
+            # Display results from session state
+            if 'analysis_results' in st.session_state and st.session_state.analysis_results:
+                st.markdown("### 🧠 GPT Watchlist Suggestions")
+                st.markdown(st.session_state.analysis_results)
+                
+                # Show which option was used
+                if st.session_state.analysis_choice == "Top 3 only":
+                    st.info("📊 Analysis for Top 3 trending stocks")
                 else:
-                    st.markdown("### 🧠 GPT Watchlist Suggestions")
-                    st.markdown(suggestions)
+                    st.info("📊 Analysis for All 10 trending stocks")
 
 with tab3:
     st.header("📋 Compare Multiple Stocks Side by Side")
