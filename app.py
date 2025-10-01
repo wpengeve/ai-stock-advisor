@@ -1144,18 +1144,60 @@ with tab3:
                         with col3:
                             st.metric("Unused Budget", f"${unused_budget:,.2f}")
                         
-                        # Provide recommendations
-                        if unused_budget > budget * 0.1:  # If more than 10% unused
-                            st.warning(f"⚠️ **High unused budget (${unused_budget:,.2f})** - Consider:")
-                            st.markdown("""
-                            **Options to use your full budget:**
-                            - **Fractional shares**: Many brokers support fractional share trading
-                            - **Adjust weights**: Give more weight to cheaper stocks
-                            - **Add more stocks**: Include lower-priced stocks
-                            - **Increase budget**: Consider a larger investment amount
+                        # Show budget utilization percentage
+                        utilization_pct = (total_invested / budget) * 100
+                        st.progress(utilization_pct / 100)
+                        st.caption(f"Budget Utilization: {utilization_pct:.1f}%")
+                        
+                        # Enhanced unused budget evaluation
+                        st.markdown("### 📈 Budget Utilization Analysis")
+                        
+                        if utilization_pct >= 95:
+                            st.success("🎯 **Excellent budget utilization!** (95%+)")
+                            st.info("Your portfolio is well-allocated with minimal unused budget.")
+                        elif utilization_pct >= 85:
+                            st.success("✅ **Good budget utilization** (85-95%)")
+                            st.info("Most of your budget is allocated. Consider adding more stocks or increasing budget for better diversification.")
+                        elif utilization_pct >= 70:
+                            st.warning("⚠️ **Moderate budget utilization** (70-85%)")
+                            st.info("""
+                            **Suggestions to improve:**
+                            - Add 1-2 more stocks to your portfolio
+                            - Consider fractional shares for expensive stocks
+                            - Adjust stock weights to better match your budget
                             """)
                         else:
-                            st.success("✅ **Good budget utilization** - Most of your budget is allocated!")
+                            st.error("❌ **Poor budget utilization** (<70%)")
+                            st.info("""
+                            **Major improvements needed:**
+                            - **Add more stocks** (aim for 5-10 stocks minimum)
+                            - **Increase budget** for better diversification
+                            - **Use fractional shares** for expensive stocks
+                            - **Consider lower-priced alternatives** for high-priced stocks
+                            """)
+                        
+                        # Show specific recommendations
+                        if unused_budget > 0:
+                            st.markdown("### 💡 Optimization Recommendations")
+                            
+                            # Find stocks with 0 shares
+                            zero_shares = [item for item in allocation if item['shares'] == 0]
+                            if zero_shares:
+                                st.markdown("**Stocks with 0 shares (causing unused budget):**")
+                                for item in zero_shares:
+                                    fractional_shares = item.get('fractional_shares', 0)
+                                    if fractional_shares > 0:
+                                        st.write(f"• **{item['ticker']}**: ${item['price']:.2f} → Could buy {fractional_shares:.2f} fractional shares for ${item['fractional_allocated']:.2f}")
+                            
+                            # Calculate potential with fractional shares
+                            total_fractional = sum(item.get('fractional_allocated', item['allocated']) for item in allocation)
+                            if total_fractional > total_invested:
+                                st.info(f"💡 **With fractional shares**: Could utilize ${total_fractional:,.2f} ({(total_fractional/budget)*100:.1f}% of budget)")
+                            
+                            # Budget scaling recommendations
+                            if unused_budget > budget * 0.3:
+                                suggested_budget = budget * 1.5
+                                st.info(f"💡 **Consider increasing budget to ${suggested_budget:,.2f}** for better diversification")
                         
                         # Export options - COMMENTED OUT
                         # st.markdown("### 📤 Export Options")
