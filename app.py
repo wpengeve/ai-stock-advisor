@@ -1108,31 +1108,31 @@ with tab3:
                                 fractional_shares = item['fractional_shares']
                                 fractional_allocated = item['fractional_allocated']
                                 allocation_data.append({
-                                    "Ticker": ticker,
-                                    "Shares": f"{fractional_shares:.2f}",
-                                    "Amount": f"${fractional_allocated:,.2f}",
+                                    "Stock": ticker,
+                                    "Price": f"${price:.2f}",
                                     "Weight": f"{weight:.1%}",
-                                    "Price": f"${price:.2f}"
+                                    "Shares": f"{fractional_shares:.2f}",
+                                    "Amount": f"${fractional_allocated:,.2f}"
                                 })
                             else:
                                 allocation_data.append({
-                                    "Ticker": ticker,
-                                    "Shares": f"{shares:.0f}",
-                                    "Amount": f"${allocated:,.2f}",
+                                    "Stock": ticker,
+                                    "Price": f"${price:.2f}",
                                     "Weight": f"{weight:.1%}",
-                                    "Price": f"${price:.2f}"
+                                    "Shares": f"{shares:.0f}",
+                                    "Amount": f"${allocated:,.2f}"
                                 })
                         
                         # Add total row
                         allocation_data.append({
-                            "Ticker": "**TOTAL**",
-                            "Shares": "",
-                            "Amount": f"**${total_invested:,.2f}**",
+                            "Stock": "**TOTAL**",
+                            "Price": "",
                             "Weight": "**100%**",
-                            "Price": ""
+                            "Shares": "",
+                            "Amount": f"**${total_invested:,.2f}**"
                         })
                         
-                        st.dataframe(pd.DataFrame(allocation_data), use_container_width=True)
+                        st.dataframe(pd.DataFrame(allocation_data), use_container_width=True, hide_index=True)
                         
                         # Show budget analysis
                         st.markdown("### 💰 Budget Analysis")
