@@ -1184,10 +1184,21 @@ with tab3:
                             zero_shares = [item for item in allocation if item['shares'] == 0]
                             if zero_shares:
                                 st.markdown("**Stocks with 0 shares (causing unused budget):**")
+                                
+                                # Create a clean table for zero-share stocks
+                                zero_shares_data = []
                                 for item in zero_shares:
                                     fractional_shares = item.get('fractional_shares', 0)
                                     if fractional_shares > 0:
-                                        st.write(f"• **{item['ticker']}**: ${item['price']:.2f} → Could buy {fractional_shares:.2f} fractional shares for ${item['fractional_allocated']:.2f}")
+                                        zero_shares_data.append({
+                                            "Stock": item['ticker'],
+                                            "Price": f"${item['price']:.2f}",
+                                            "Fractional Shares": f"{fractional_shares:.2f}",
+                                            "Fractional Amount": f"${item['fractional_allocated']:.2f}"
+                                        })
+                                
+                                if zero_shares_data:
+                                    st.dataframe(pd.DataFrame(zero_shares_data), use_container_width=True, hide_index=True)
                             
                             # Calculate potential with fractional shares
                             total_fractional = sum(item.get('fractional_allocated', item['allocated']) for item in allocation)
