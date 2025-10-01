@@ -550,18 +550,10 @@ with tab2:
                 key="stock_choice_radio"
             )
 
-            # Use session state to manage suggestions and prevent jumping
-            if 'last_choice' not in st.session_state:
-                st.session_state.last_choice = None
-            if 'suggestions' not in st.session_state:
-                st.session_state.suggestions = None
-            if 'current_choice' not in st.session_state:
-                st.session_state.current_choice = choice
-
-            # Only regenerate if choice changed
-            if st.session_state.current_choice != choice or st.session_state.suggestions is None:
-                st.session_state.current_choice = choice
-                
+            # Create a container to hold results and prevent jumping
+            results_container = st.container()
+            
+            with results_container:
                 if choice == "Top 3 only":
                     selected = trending[:3]
                     trending_formatted = "\n".join([f"- {ticker} ({name})" for ticker, name in selected])
@@ -576,19 +568,19 @@ with tab2:
                 Respond in a clean readable bullet point format.
                 """
                     with st.spinner("💭 Generating analysis for Top 3 stocks..."):
-                        st.session_state.suggestions = suggest_stocks_to_watch(ticker_list=selected, custom_prompt=prompt)
+                        suggestions = suggest_stocks_to_watch(ticker_list=selected, custom_prompt=prompt)
 
                 else:
                     selected = trending[:10]
                     with st.spinner("💭 Generating analysis for All 10 stocks..."):
-                        st.session_state.suggestions = suggest_stocks_to_watch(ticker_list=selected)
+                        suggestions = suggest_stocks_to_watch(ticker_list=selected)
 
-            # Display results
-            if not st.session_state.suggestions:
-                st.error("⚠️ GPT returned an empty response.")
-            else:
-                st.markdown("### 🧠 GPT Watchlist Suggestions")
-                st.markdown(st.session_state.suggestions)
+                # Display results
+                if not suggestions:
+                    st.error("⚠️ GPT returned an empty response.")
+                else:
+                    st.markdown("### 🧠 GPT Watchlist Suggestions")
+                    st.markdown(suggestions)
 
 with tab3:
     st.header("📋 Compare Multiple Stocks Side by Side")
