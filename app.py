@@ -1079,11 +1079,6 @@ with tab3:
                 if custom_weights:
                     st.markdown("### 📋 Allocation Results")
                     
-                    # Debug: Show the weights being used
-                    st.markdown("**🔍 Debug - Weights being used:**")
-                    for ticker, weight in custom_weights.items():
-                        st.write(f"{ticker}: {weight:.1%}")
-                    
                     with st.spinner("Calculating optimal allocation..."):
                         allocation = allocate_portfolio_with_sector_preference(
                             budget=budget,
@@ -1098,11 +1093,6 @@ with tab3:
                         allocation_data = []
                         total_invested = 0
                         unused_budget = budget
-                        
-                        # Debug: Show raw allocation data
-                        st.markdown("**🔍 Debug - Raw allocation data:**")
-                        for item in allocation:
-                            st.write(f"{item['ticker']}: Weight={item['weight']:.1%}, Shares={item['shares']}, Price=${item['price']:.2f}, Allocated=${item['allocated']:.2f}")
                         
                         for item in allocation:
                             ticker = item['ticker']
@@ -1119,20 +1109,16 @@ with tab3:
                                 fractional_allocated = item['fractional_allocated']
                                 allocation_data.append({
                                     "Ticker": ticker,
-                                    "Shares (Whole)": f"{shares:.0f}",
-                                    "Shares (Fractional)": f"{fractional_shares:.2f}",
-                                    "Amount (Whole)": f"${allocated:,.2f}",
-                                    "Amount (Fractional)": f"${fractional_allocated:,.2f}",
+                                    "Shares": f"{fractional_shares:.2f}",
+                                    "Amount": f"${fractional_allocated:,.2f}",
                                     "Weight": f"{weight:.1%}",
                                     "Price": f"${price:.2f}"
                                 })
                             else:
                                 allocation_data.append({
                                     "Ticker": ticker,
-                                    "Shares (Whole)": f"{shares:.0f}",
-                                    "Shares (Fractional)": f"{shares:.0f}",
-                                    "Amount (Whole)": f"${allocated:,.2f}",
-                                    "Amount (Fractional)": f"${allocated:,.2f}",
+                                    "Shares": f"{shares:.0f}",
+                                    "Amount": f"${allocated:,.2f}",
                                     "Weight": f"{weight:.1%}",
                                     "Price": f"${price:.2f}"
                                 })
@@ -1140,10 +1126,8 @@ with tab3:
                         # Add total row
                         allocation_data.append({
                             "Ticker": "**TOTAL**",
-                            "Shares (Whole)": "",
-                            "Shares (Fractional)": "",
-                            "Amount (Whole)": f"**${total_invested:,.2f}**",
-                            "Amount (Fractional)": f"**${budget:,.2f}**",
+                            "Shares": "",
+                            "Amount": f"**${total_invested:,.2f}**",
                             "Weight": "**100%**",
                             "Price": ""
                         })
