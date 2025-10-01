@@ -154,7 +154,7 @@ def generate_portfolio_pdf(allocation_data, budget, tech_preference):
 
 
 def main():
-st.set_page_config(page_title="AI Stock Advisor", page_icon="📈")
+    st.set_page_config(page_title="AI Stock Advisor", page_icon="📈")
 
     st.title("🤖 AI Stock Advisor")
     st.markdown("Your LLM-powered assistant for investment research")
