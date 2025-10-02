@@ -1211,7 +1211,7 @@ with tab3:
                                 st.info(f"💡 **Consider increasing budget to ${suggested_budget:,.2f}** for better diversification")
                             
                             # Smart stock suggestions for better budget utilization
-                            st.markdown("### 🎯 Smart Stock Suggestions")
+                            st.markdown("### 🎯 Smart Stock Selection Guide")
                             
                             # Calculate average price of selected stocks
                             avg_price = sum(prices.get(ticker, 0) for ticker in selected_symbols) / len(selected_symbols)
