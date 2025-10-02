@@ -1217,7 +1217,7 @@ with tab3:
                             avg_price = sum(prices.get(ticker, 0) for ticker in selected_symbols) / len(selected_symbols)
                             
                             if avg_price > budget * 0.3:  # If average stock price is >30% of budget
-                                st.warning("⚠️ **Your stocks are too expensive for your budget!**")
+                                st.error("🚨 **STOCK PRICES TOO HIGH FOR BUDGET!**")
                                 
                                 # Simple, clean display
                                 col1, col2 = st.columns(2)
