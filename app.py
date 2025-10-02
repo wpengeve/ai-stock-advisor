@@ -1218,16 +1218,41 @@ with tab3:
                             
                             if avg_price > budget * 0.3:  # If average stock price is >30% of budget
                                 st.warning("⚠️ **Your stocks are too expensive for your budget!**")
-                                st.info(f"""
-                                **Current average stock price: ${avg_price:.2f}**
-                                **Recommended average price: ${budget * 0.1:.2f}** (10% of budget)
                                 
-                                **Better stock selection strategies:**
-                                - **Mix high and low-priced stocks** (e.g., AAPL + MSFT + some $20-50 stocks)
-                                - **Add dividend stocks** (often lower-priced, good for small budgets)
-                                - **Consider ETFs** (SPY, QQQ) for broad market exposure
-                                - **Use fractional shares** for expensive stocks you really want
-                                """)
+                                # Create a clean comparison table
+                                comparison_data = [
+                                    {
+                                        "Metric": "Current Average Price",
+                                        "Value": f"${avg_price:.2f}",
+                                        "Status": "❌ Too High"
+                                    },
+                                    {
+                                        "Metric": "Recommended Average Price", 
+                                        "Value": f"${budget * 0.1:.2f}",
+                                        "Status": "✅ Ideal (10% of budget)"
+                                    }
+                                ]
+                                
+                                st.dataframe(pd.DataFrame(comparison_data), use_container_width=True, hide_index=True)
+                                
+                                st.markdown("**💡 Better stock selection strategies:**")
+                                col1, col2 = st.columns(2)
+                                
+                                with col1:
+                                    st.markdown("""
+                                    **🎯 Mix Price Ranges:**
+                                    - High-priced: AAPL, MSFT, GOOGL
+                                    - Mid-priced: JNJ, PG, KO ($50-150)
+                                    - Low-priced: PLUG, INTC ($20-50)
+                                    """)
+                                
+                                with col2:
+                                    st.markdown("""
+                                    **📈 Smart Alternatives:**
+                                    - **ETFs**: SPY, QQQ (broad exposure)
+                                    - **Dividend stocks**: Often lower-priced
+                                    - **Fractional shares**: For expensive stocks
+                                    """)
                             
                             # Suggest specific stock categories
                             st.markdown("**💡 Recommended stock mix for your budget:**")
