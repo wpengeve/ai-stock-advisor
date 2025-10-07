@@ -758,13 +758,13 @@ with tab2:
     st.header("💡 Get Investment Suggestions")
 
     # Always show the trending stocks and analysis options
-            # 1. Fetch 10 trending stocks
-            trending = trending_stocks[:10]
+    # 1. Fetch 10 trending stocks
+    trending = trending_stocks[:10]
 
-            # 2. Display all 10 trending stocks
-            df = pd.DataFrame(trending, columns=["Ticker", "Company"])
-            st.markdown("### 🔥 Currently Trending Tickers")
-            st.dataframe(df, hide_index=True)
+    # 2. Display all 10 trending stocks
+    df = pd.DataFrame(trending, columns=["Ticker", "Company"])
+    st.markdown("### 🔥 Currently Trending Tickers")
+    st.dataframe(df, hide_index=True)
 
     # 3. Use session state to prevent jumping completely
     st.markdown("**📈 Choose your analysis option:**")
@@ -775,7 +775,7 @@ with tab2:
     if 'analysis_results' not in st.session_state:
         st.session_state.analysis_results = None
     
-            choice = st.radio(
+    choice = st.radio(
         "Select analysis type:",
         ["🔝 Top 3 Only", "📊 All 10 Stocks"],
         key="analysis_choice_radio"
