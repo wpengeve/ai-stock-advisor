@@ -493,9 +493,9 @@ with tab1:
                                 
                                 comparison_data.append(stock_data)
                             
-                            # Clear progress indicators
-                            progress_bar.empty()
-                            status_text.empty()
+                            # Update progress to 100% and show completion
+                            progress_bar.progress(1.0)
+                            status_text.text("✅ Analysis Complete!")
                             
                             # Display comparison table
                             if comparison_data:
