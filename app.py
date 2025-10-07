@@ -392,42 +392,44 @@ with tab1:
             st.session_state.advanced_pending_additions = []
             st.session_state.advanced_search_results = {}
         
-        # Smart input for multiple stocks
-        user_input = st.text_input(
-            "Add stocks", 
-            placeholder="AAPL, Target, Amazon, MSFT, TSLA",
-            help="Type tickers directly (AAPL, MSFT) or company names (Apple, Target) - separate with commas"
-        )
-        
-        if user_input:
-            # Parse input
-            input_items = [item.strip() for item in user_input.split(',')]
-            input_items = [item for item in input_items if item]  # Remove empty items
+        # Smart input for multiple stocks using form
+        with st.form("advanced_stock_input", clear_on_submit=True):
+            user_input = st.text_input(
+                "Add stocks", 
+                placeholder="AAPL, Target, Amazon, MSFT, TSLA",
+                help="Type tickers directly (AAPL, MSFT) or company names (Apple, Target) - separate with commas"
+            )
             
-            if input_items:
-                # Process each item
-                found_tickers = []
-                need_search = []
+            submitted = st.form_submit_button("Add Stocks")
+            
+            if submitted and user_input:
+                # Parse input
+                input_items = [item.strip() for item in user_input.split(',')]
+                input_items = [item for item in input_items if item]  # Remove empty items
                 
-                for item in input_items:
-                    item_upper = item.upper()
-                    # Check if it's already a ticker
-                    if item_upper in COMPANY_TO_TICKER.values():
-                        found_tickers.append(item_upper)
-                    # Check if it's a company name
-                    elif item_upper in COMPANY_TO_TICKER:
-                        found_tickers.append(COMPANY_TO_TICKER[item_upper])
-                    else:
-                        need_search.append(item)
-                
-                if found_tickers:
-                    st.write(f"✅ Added tickers: {', '.join(found_tickers)}")
-                    st.session_state.advanced_pending_additions = found_tickers
-                
-                if need_search:
-                    st.write(f"🔍 Need to search for: {', '.join(need_search)}")
-                    # For now, just add them as-is (could implement search later)
-                    st.session_state.advanced_pending_additions.extend(need_search)
+                if input_items:
+                    # Process each item
+                    found_tickers = []
+                    need_search = []
+                    
+                    for item in input_items:
+                        item_upper = item.upper()
+                        # Check if it's already a ticker
+                        if item_upper in COMPANY_TO_TICKER.values():
+                            found_tickers.append(item_upper)
+                        # Check if it's a company name
+                        elif item_upper in COMPANY_TO_TICKER:
+                            found_tickers.append(COMPANY_TO_TICKER[item_upper])
+                        else:
+                            need_search.append(item)
+                    
+                    if found_tickers:
+                        st.session_state.advanced_pending_additions = found_tickers
+                    
+                    if need_search:
+                        st.session_state.advanced_pending_additions.extend(need_search)
+                    
+                    st.rerun()
         
         # Display selected stocks
         if st.session_state.advanced_selected_stocks:
