@@ -211,12 +211,13 @@ with st.spinner("Loading trending stocks..."):
     trending_stocks = get_trending_stocks(limit=30)
 
     tab1, tab2, tab3, tab4, tab5 = st.tabs(["📊 Stock Summary", "💡 Watchlist Suggestions", "📋 Compare Stocks", "💰 Portfolio Allocator", "🔬 Advanced Analysis"])
-
-with tab1:
+    
+    # Header section above all tabs
     st.title("🤖 AI Stock Advisor")
     st.markdown("Your LLM-powered assistant for investment research")
     st.success("🚀 **AI Stock Advisor is ready!** Enhanced with technical analysis, fundamental analysis, risk management, and backtesting capabilities.")
-    
+
+with tab1:
     st.header("📊 Get Market Summary for a Stock")
     st.markdown("### 🔥 Trending Stocks Options")
 
