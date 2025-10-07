@@ -370,7 +370,7 @@ with tab1:
         st.info("Select or surprise-pick a stock to see the summary.")
 
     with tab5:
-        st.header("🔬 ADVANCED ANALYSIS - UPDATED!")
+        st.header("🔬 Advanced Analysis")
         st.markdown("### 📈 Technical & Fundamental Analysis")
         
         # Multiple stock selection for advanced analysis
