@@ -504,10 +504,10 @@ with tab1:
                                 comparison_df = pd.DataFrame(comparison_data)
                                 st.dataframe(comparison_df, use_container_width=True, hide_index=True)
                                 
-                                # Add ranking
+                                # Add ranking with detailed explanations
                                 st.markdown("### 🏆 Stock Rankings")
                                 
-                                # Technical ranking
+                                # Technical ranking with explanation
                                 tech_ranking = []
                                 for data in comparison_data:
                                     if data['Technical Confidence'] != 'N/A':
@@ -517,10 +517,19 @@ with tab1:
                                 if tech_ranking:
                                     tech_ranking.sort(key=lambda x: x[1], reverse=True)
                                     st.markdown("**📈 Technical Analysis Ranking:**")
+                                    st.markdown("*Based on RSI, Moving Averages, Bollinger Bands, and MACD signals*")
                                     for i, (ticker, confidence) in enumerate(tech_ranking, 1):
-                                        st.write(f"{i}. **{ticker}** - {confidence}% confidence")
+                                        if confidence >= 80:
+                                            signal_desc = "Strong Buy Signal"
+                                        elif confidence >= 60:
+                                            signal_desc = "Buy Signal"
+                                        elif confidence >= 40:
+                                            signal_desc = "Neutral Signal"
+                                        else:
+                                            signal_desc = "Sell Signal"
+                                        st.write(f"{i}. **{ticker}** - {confidence}% confidence ({signal_desc})")
                                 
-                                # Fundamental ranking
+                                # Fundamental ranking with explanation
                                 fund_ranking = []
                                 for data in comparison_data:
                                     if data['Fundamental Score'] != 'N/A':
@@ -530,11 +539,23 @@ with tab1:
                                 if fund_ranking:
                                     fund_ranking.sort(key=lambda x: x[1], reverse=True)
                                     st.markdown("**💼 Fundamental Analysis Ranking:**")
+                                    st.markdown("*Based on P/E ratio, ROE, debt levels, growth metrics, and financial health*")
                                     for i, (ticker, score) in enumerate(fund_ranking, 1):
-                                        st.write(f"{i}. **{ticker}** - {score}% score")
+                                        if score >= 70:
+                                            quality_desc = "Excellent Fundamentals"
+                                        elif score >= 50:
+                                            quality_desc = "Good Fundamentals"
+                                        elif score >= 30:
+                                            quality_desc = "Average Fundamentals"
+                                        else:
+                                            quality_desc = "Poor Fundamentals"
+                                        st.write(f"{i}. **{ticker}** - {score}% score ({quality_desc})")
                                 
-                                # Overall recommendation
+                                # Overall recommendation with detailed explanation
                                 st.markdown("### 💡 Overall Recommendation")
+                                st.markdown("**🎯 Top Recommendations:**")
+                                st.markdown("*Overall Score = (Technical Analysis × 50%) + (Fundamental Analysis × 50%)*")
+                                st.markdown("*This balanced weighting considers both short-term technical signals and long-term fundamental value*")
                                 
                                 # Calculate overall scores
                                 overall_scores = []
@@ -551,13 +572,26 @@ with tab1:
                                     
                                     # Weighted average (50% technical, 50% fundamental)
                                     overall_score = (tech_score * 0.5) + (fund_score * 0.5)
-                                    overall_scores.append((ticker, overall_score))
+                                    overall_scores.append((ticker, overall_score, tech_score, fund_score))
                                 
                                 if overall_scores:
                                     overall_scores.sort(key=lambda x: x[1], reverse=True)
-                                    st.markdown("**🎯 Top Recommendations:**")
-                                    for i, (ticker, score) in enumerate(overall_scores[:3], 1):
-                                        st.write(f"{i}. **{ticker}** - Overall Score: {score:.1f}%")
+                                    for i, (ticker, overall, technical, fundamental) in enumerate(overall_scores[:3], 1):
+                                        st.write(f"{i}. **{ticker}** - Overall Score: {overall:.1f}%")
+                                        st.write(f"   📈 Technical: {technical:.1f}% | 💼 Fundamental: {fundamental:.1f}%")
+                                        
+                                        # Add recommendation explanation
+                                        if overall >= 70:
+                                            recommendation = "Strong Buy - Excellent technical and fundamental signals"
+                                        elif overall >= 55:
+                                            recommendation = "Buy - Good combination of technical and fundamental factors"
+                                        elif overall >= 40:
+                                            recommendation = "Hold - Mixed signals, monitor closely"
+                                        else:
+                                            recommendation = "Avoid - Poor technical and fundamental indicators"
+                                        
+                                        st.write(f"   💡 **Recommendation:** {recommendation}")
+                                        st.write("")  # Add spacing
                                 
                         except Exception as e:
                             st.error(f"❌ Error during comparison analysis: {str(e)}")
