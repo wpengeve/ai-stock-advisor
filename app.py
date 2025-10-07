@@ -786,31 +786,31 @@ with tab2:
         st.session_state.last_analysis_choice = choice
         
         if choice == "🔝 Top 3 Only":
-                selected = trending[:3]
+            selected = trending[:3]
 
-                trending_formatted = "\n".join([f"- {ticker} ({name})" for ticker, name in selected])
-                prompt = f"""
-            You are a stock market investment assistant.
+            trending_formatted = "\n".join([f"- {ticker} ({name})" for ticker, name in selected])
+            prompt = f"""
+You are a stock market investment assistant.
 
-            Here are the trending stocks:
-            {trending_formatted}
+Here are the trending stocks:
+{trending_formatted}
 
-            For each stock above, briefly explain whether it's a good opportunity to watch or invest in now. 
-            Write 1–2 sentences for each. 
-            Respond in a clean readable bullet point format.
-            """
-        with st.spinner("💭 Generating analysis for Top 3 stocks..."):
+For each stock above, briefly explain whether it's a good opportunity to watch or invest in now. 
+Write 1–2 sentences for each. 
+Respond in a clean readable bullet point format.
+"""
+            with st.spinner("💭 Generating analysis for Top 3 stocks..."):
                 suggestions = suggest_stocks_to_watch(ticker_list=selected, custom_prompt=prompt)
 
             # Store results in session state
-        st.session_state.analysis_results = suggestions
+            st.session_state.analysis_results = suggestions
             
             # Display results
-        if suggestions:
+            if suggestions:
                 st.markdown("### 🧠 GPT Watchlist Suggestions")
                 st.markdown(suggestions)
                 st.info("📊 Analysis for Top 3 trending stocks")
-        else:
+            else:
                 st.error("⚠️ GPT returned an empty response.")
         
         else:  # All 10 Stocks
@@ -959,7 +959,7 @@ with tab3:
             selected_display = st.multiselect("Select stocks to allocate", trending_display)
             selected_symbols = [s.split(" - ")[0] for s in selected_display]
             
-                    else:
+        else:
             # Manual stock entry
             st.markdown("#### ✏️ Enter Your Stock List")
             
@@ -1043,7 +1043,7 @@ with tab3:
                                 if ticker not in st.session_state.selected_stocks:
                                     st.session_state.selected_stocks.append(ticker)
                                     added_stocks.append(ticker)
-                else:
+                            else:
                                 # Company name for search
                                 search_needed.append(item)
                         
