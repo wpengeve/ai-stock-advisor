@@ -758,10 +758,10 @@ with tab2:
     st.header("💡 Get Investment Suggestions")
 
     # Always show the trending stocks and analysis options
-    # 1. Fetch 10 trending stocks
+            # 1. Fetch 10 trending stocks
     trending = trending_stocks[:10]
 
-    # 2. Display all 10 trending stocks
+            # 2. Display all 10 trending stocks
     df = pd.DataFrame(trending, columns=["Ticker", "Company"])
     st.markdown("### 🔥 Currently Trending Tickers")
     st.dataframe(df, hide_index=True)
@@ -1047,17 +1047,17 @@ with tab3:
                                 # Company name for search
                                 search_needed.append(item)
                         
-                        # Show results
-                        if added_stocks:
-                            st.success(f"✅ Added tickers: {', '.join(added_stocks)}")
+            # Show results
+            if added_stocks:
+                st.success(f"✅ Added tickers: {', '.join(added_stocks)}")
                         
-                        if search_needed:
-                            st.info(f"🔍 Need to search for: {', '.join(search_needed)}")
+            if search_needed:
+                st.info(f"🔍 Need to search for: {', '.join(search_needed)}")
                             
-                            # Search for company names and store results in session state
-                            for company_name in search_needed:
-                                search_results = cached_search_companies(company_name, 3)
-                                st.session_state.search_results[company_name] = search_results
+                # Search for company names and store results in session state
+                for company_name in search_needed:
+                    search_results = cached_search_companies(company_name, 3)
+                    st.session_state.search_results[company_name] = search_results
             
             # Display search results outside the form (so buttons work)
             if st.session_state.search_results:
