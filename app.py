@@ -391,18 +391,18 @@ with tab1:
             st.success(f"✅ Added {len(st.session_state.advanced_pending_additions)} stocks: {', '.join(st.session_state.advanced_pending_additions)}")
             st.session_state.advanced_pending_additions = []
             st.session_state.advanced_search_results = {}
+            st.rerun()
         
-        # Smart input for multiple stocks using form
-        with st.form("advanced_stock_input", clear_on_submit=True):
-            user_input = st.text_input(
-                "Add stocks", 
-                placeholder="AAPL, Target, Amazon, MSFT, TSLA",
-                help="Type tickers directly (AAPL, MSFT) or company names (Apple, Target) - separate with commas"
-            )
-            
-            submitted = st.form_submit_button("Add Stocks")
-            
-            if submitted and user_input:
+        # Smart input for multiple stocks
+        user_input = st.text_input(
+            "Add stocks", 
+            placeholder="AAPL, Target, Amazon, MSFT, TSLA",
+            help="Type tickers directly (AAPL, MSFT) or company names (Apple, Target) - separate with commas",
+            key="advanced_stock_input"
+        )
+        
+        if st.button("Add Stocks", key="advanced_add_button"):
+            if user_input:
                 # Parse input
                 input_items = [item.strip() for item in user_input.split(',')]
                 input_items = [item for item in input_items if item]  # Remove empty items
