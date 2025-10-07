@@ -369,10 +369,6 @@ with tab1:
         st.info("Select or surprise-pick a stock to see the summary.")
 
     with tab5:
-        st.title("🤖 AI Stock Advisor")
-        st.markdown("Your LLM-powered assistant for investment research")
-        st.success("🚀 **AI Stock Advisor is ready!** Enhanced with technical analysis, fundamental analysis, risk management, and backtesting capabilities.")
-        
         st.header("🔬 Advanced Analysis")
         st.markdown("### 📈 Technical & Fundamental Analysis")
         
@@ -759,20 +755,16 @@ with tab1:
                     """)
 
 with tab2:
-    st.title("🤖 AI Stock Advisor")
-    st.markdown("Your LLM-powered assistant for investment research")
-    st.success("🚀 **AI Stock Advisor is ready!** Enhanced with technical analysis, fundamental analysis, risk management, and backtesting capabilities.")
-    
     st.header("💡 Get Investment Suggestions")
 
     # Always show the trending stocks and analysis options
-    # 1. Fetch 10 trending stocks
-    trending = trending_stocks[:10]
+            # 1. Fetch 10 trending stocks
+            trending = trending_stocks[:10]
 
-    # 2. Display all 10 trending stocks
-    df = pd.DataFrame(trending, columns=["Ticker", "Company"])
-    st.markdown("### 🔥 Currently Trending Tickers")
-    st.dataframe(df, hide_index=True)
+            # 2. Display all 10 trending stocks
+            df = pd.DataFrame(trending, columns=["Ticker", "Company"])
+            st.markdown("### 🔥 Currently Trending Tickers")
+            st.dataframe(df, hide_index=True)
 
     # 3. Use session state to prevent jumping completely
     st.markdown("**📈 Choose your analysis option:**")
@@ -783,7 +775,7 @@ with tab2:
     if 'analysis_results' not in st.session_state:
         st.session_state.analysis_results = None
     
-    choice = st.radio(
+            choice = st.radio(
         "Select analysis type:",
         ["🔝 Top 3 Only", "📊 All 10 Stocks"],
         key="analysis_choice_radio"
@@ -794,22 +786,22 @@ with tab2:
         st.session_state.last_analysis_choice = choice
         
         if choice == "🔝 Top 3 Only":
-            selected = trending[:3]
-            
-            trending_formatted = "\n".join([f"- {ticker} ({name})" for ticker, name in selected])
-            prompt = f"""
-        You are a stock market investment assistant.
+                selected = trending[:3]
 
-        Here are the trending stocks:
-        {trending_formatted}
+                trending_formatted = "\n".join([f"- {ticker} ({name})" for ticker, name in selected])
+                prompt = f"""
+            You are a stock market investment assistant.
 
-        For each stock above, briefly explain whether it's a good opportunity to watch or invest in now. 
-        Write 1–2 sentences for each. 
-        Respond in a clean readable bullet point format.
-        """
+            Here are the trending stocks:
+            {trending_formatted}
+
+            For each stock above, briefly explain whether it's a good opportunity to watch or invest in now. 
+            Write 1–2 sentences for each. 
+            Respond in a clean readable bullet point format.
+            """
             with st.spinner("💭 Generating analysis for Top 3 stocks..."):
                 suggestions = suggest_stocks_to_watch(ticker_list=selected, custom_prompt=prompt)
-            
+
             # Store results in session state
             st.session_state.analysis_results = suggestions
             
@@ -875,10 +867,6 @@ with tab2:
             st.info("📊 Analysis for All 10 trending stocks")
 
 with tab3:
-    st.title("🤖 AI Stock Advisor")
-    st.markdown("Your LLM-powered assistant for investment research")
-    st.success("🚀 **AI Stock Advisor is ready!** Enhanced with technical analysis, fundamental analysis, risk management, and backtesting capabilities.")
-    
     st.header("📋 Compare Multiple Stocks Side by Side")
 
     trending = trending_stocks[:10]
@@ -938,10 +926,6 @@ with tab3:
             pass
     
     with tab4:
-        st.title("🤖 AI Stock Advisor")
-        st.markdown("Your LLM-powered assistant for investment research")
-        st.success("🚀 **AI Stock Advisor is ready!** Enhanced with technical analysis, fundamental analysis, risk management, and backtesting capabilities.")
-        
         st.header("💰 Portfolio Allocator")
         st.markdown("Suggest how to allocate your budget across selected stocks with sector preferences.")
         
@@ -975,7 +959,7 @@ with tab3:
             selected_display = st.multiselect("Select stocks to allocate", trending_display)
             selected_symbols = [s.split(" - ")[0] for s in selected_display]
             
-        else:
+                    else:
             # Manual stock entry
             st.markdown("#### ✏️ Enter Your Stock List")
             
@@ -1059,7 +1043,7 @@ with tab3:
                                 if ticker not in st.session_state.selected_stocks:
                                     st.session_state.selected_stocks.append(ticker)
                                     added_stocks.append(ticker)
-                            else:
+                else:
                                 # Company name for search
                                 search_needed.append(item)
                         
