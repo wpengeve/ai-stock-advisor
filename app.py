@@ -413,7 +413,8 @@ with tab1:
                             found_tickers.append(item_upper)
                     
                     if found_tickers:
-                        st.session_state.advanced_selected_stocks.extend(found_tickers)
+                        # Remove duplicates by converting to set and back to list
+                        st.session_state.advanced_selected_stocks = list(set(st.session_state.advanced_selected_stocks + found_tickers))
                         st.success(f"✅ Added {len(found_tickers)} stocks: {', '.join(found_tickers)}")
                         st.rerun()
         
