@@ -461,9 +461,17 @@ with tab1:
                             
                             # Collect data for all stocks
                             comparison_data = []
+                            total_stocks = len(st.session_state.advanced_selected_stocks)
                             
-                            for ticker in st.session_state.advanced_selected_stocks:
-                                st.write(f"🔍 Analyzing {ticker}...")
+                            # Create progress bar
+                            progress_bar = st.progress(0)
+                            status_text = st.empty()
+                            
+                            for i, ticker in enumerate(st.session_state.advanced_selected_stocks):
+                                # Update progress
+                                progress = (i + 1) / total_stocks
+                                progress_bar.progress(progress)
+                                status_text.text(f"🔍 Analyzing {ticker}... ({i+1}/{total_stocks})")
                                 
                                 # Technical Analysis
                                 technical_signals = technical_analyzer.generate_technical_signals(ticker)
@@ -484,6 +492,10 @@ with tab1:
                                 }
                                 
                                 comparison_data.append(stock_data)
+                            
+                            # Clear progress indicators
+                            progress_bar.empty()
+                            status_text.empty()
                             
                             # Display comparison table
                             if comparison_data:
