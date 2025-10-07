@@ -206,12 +206,6 @@ def generate_portfolio_pdf(allocation_data, budget, tech_preference):
 def main():
     st.set_page_config(page_title="AI Stock Advisor", page_icon="📈")
 
-    st.title("🤖 AI Stock Advisor")
-    st.markdown("Your LLM-powered assistant for investment research")
-    
-    # Add startup message
-    st.success("🚀 **AI Stock Advisor is ready!** Enhanced with technical analysis, fundamental analysis, risk management, and backtesting capabilities.")
-
 # ✅ Add spinner while fetching trending stocks
 with st.spinner("Loading trending stocks..."):
     trending_stocks = get_trending_stocks(limit=30)
@@ -219,6 +213,10 @@ with st.spinner("Loading trending stocks..."):
     tab1, tab2, tab3, tab4, tab5 = st.tabs(["📊 Stock Summary", "💡 Watchlist Suggestions", "📋 Compare Stocks", "💰 Portfolio Allocator", "🔬 Advanced Analysis"])
 
 with tab1:
+    st.title("🤖 AI Stock Advisor")
+    st.markdown("Your LLM-powered assistant for investment research")
+    st.success("🚀 **AI Stock Advisor is ready!** Enhanced with technical analysis, fundamental analysis, risk management, and backtesting capabilities.")
+    
     st.header("📊 Get Market Summary for a Stock")
     st.markdown("### 🔥 Trending Stocks Options")
 
@@ -370,6 +368,10 @@ with tab1:
         st.info("Select or surprise-pick a stock to see the summary.")
 
     with tab5:
+        st.title("🤖 AI Stock Advisor")
+        st.markdown("Your LLM-powered assistant for investment research")
+        st.success("🚀 **AI Stock Advisor is ready!** Enhanced with technical analysis, fundamental analysis, risk management, and backtesting capabilities.")
+        
         st.header("🔬 Advanced Analysis")
         st.markdown("### 📈 Technical & Fundamental Analysis")
         
@@ -756,6 +758,10 @@ with tab1:
                     """)
 
 with tab2:
+    st.title("🤖 AI Stock Advisor")
+    st.markdown("Your LLM-powered assistant for investment research")
+    st.success("🚀 **AI Stock Advisor is ready!** Enhanced with technical analysis, fundamental analysis, risk management, and backtesting capabilities.")
+    
     st.header("💡 Get Investment Suggestions")
 
     # Always show the trending stocks and analysis options
@@ -868,6 +874,10 @@ with tab2:
             st.info("📊 Analysis for All 10 trending stocks")
 
 with tab3:
+    st.title("🤖 AI Stock Advisor")
+    st.markdown("Your LLM-powered assistant for investment research")
+    st.success("🚀 **AI Stock Advisor is ready!** Enhanced with technical analysis, fundamental analysis, risk management, and backtesting capabilities.")
+    
     st.header("📋 Compare Multiple Stocks Side by Side")
 
     trending = trending_stocks[:10]
@@ -927,6 +937,10 @@ with tab3:
             pass
     
     with tab4:
+        st.title("🤖 AI Stock Advisor")
+        st.markdown("Your LLM-powered assistant for investment research")
+        st.success("🚀 **AI Stock Advisor is ready!** Enhanced with technical analysis, fundamental analysis, risk management, and backtesting capabilities.")
+        
         st.header("💰 Portfolio Allocator")
         st.markdown("Suggest how to allocate your budget across selected stocks with sector preferences.")
         
