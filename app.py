@@ -445,7 +445,112 @@ with tab1:
             else:
                 # Multiple stocks comparison
                 advanced_ticker = None
-                st.info("Multiple stocks comparison will be implemented in the next update!")
+                
+                if len(st.session_state.advanced_selected_stocks) >= 2:
+                    st.markdown("#### 📊 Multiple Stocks Comparison")
+                    
+                    with st.spinner("Performing comprehensive comparison analysis..."):
+                        try:
+                            # Import analysis modules
+                            from utils.technical_analysis import TechnicalAnalyzer
+                            from utils.fundamental_analysis import FundamentalAnalyzer
+                            
+                            # Initialize analyzers
+                            technical_analyzer = TechnicalAnalyzer()
+                            fundamental_analyzer = FundamentalAnalyzer()
+                            
+                            # Collect data for all stocks
+                            comparison_data = []
+                            
+                            for ticker in st.session_state.advanced_selected_stocks:
+                                st.write(f"🔍 Analyzing {ticker}...")
+                                
+                                # Technical Analysis
+                                technical_signals = technical_analyzer.generate_technical_signals(ticker)
+                                
+                                # Fundamental Analysis
+                                fundamental_analysis = fundamental_analyzer.analyze_fundamentals(ticker)
+                                
+                                # Collect key metrics
+                                stock_data = {
+                                    'Ticker': ticker,
+                                    'Technical Signal': technical_signals.get('overall_signal', 'N/A') if 'error' not in technical_signals else 'Error',
+                                    'RSI': f"{technical_signals.get('rsi', 0):.1f}" if 'error' not in technical_signals else 'N/A',
+                                    'Technical Confidence': f"{technical_signals.get('confidence', 0)}%" if 'error' not in technical_signals else 'N/A',
+                                    'Fundamental Score': f"{fundamental_analysis.get('fundamental_score', {}).get('score_percentage', 0):.1f}%" if 'error' not in fundamental_analysis else 'N/A',
+                                    'Fundamental Rating': fundamental_analysis.get('fundamental_score', {}).get('rating', 'N/A') if 'error' not in fundamental_analysis else 'N/A',
+                                    'P/E Ratio': f"{fundamental_analysis.get('valuation_metrics', {}).get('pe_ratio', 0):.2f}" if 'error' not in fundamental_analysis else 'N/A',
+                                    'ROE': f"{fundamental_analysis.get('financial_ratios', {}).get('roe', 0):.2%}" if 'error' not in fundamental_analysis else 'N/A'
+                                }
+                                
+                                comparison_data.append(stock_data)
+                            
+                            # Display comparison table
+                            if comparison_data:
+                                st.markdown("### 📈 Comprehensive Comparison")
+                                comparison_df = pd.DataFrame(comparison_data)
+                                st.dataframe(comparison_df, use_container_width=True, hide_index=True)
+                                
+                                # Add ranking
+                                st.markdown("### 🏆 Stock Rankings")
+                                
+                                # Technical ranking
+                                tech_ranking = []
+                                for data in comparison_data:
+                                    if data['Technical Confidence'] != 'N/A':
+                                        confidence = float(data['Technical Confidence'].replace('%', ''))
+                                        tech_ranking.append((data['Ticker'], confidence))
+                                
+                                if tech_ranking:
+                                    tech_ranking.sort(key=lambda x: x[1], reverse=True)
+                                    st.markdown("**📈 Technical Analysis Ranking:**")
+                                    for i, (ticker, confidence) in enumerate(tech_ranking, 1):
+                                        st.write(f"{i}. **{ticker}** - {confidence}% confidence")
+                                
+                                # Fundamental ranking
+                                fund_ranking = []
+                                for data in comparison_data:
+                                    if data['Fundamental Score'] != 'N/A':
+                                        score = float(data['Fundamental Score'].replace('%', ''))
+                                        fund_ranking.append((data['Ticker'], score))
+                                
+                                if fund_ranking:
+                                    fund_ranking.sort(key=lambda x: x[1], reverse=True)
+                                    st.markdown("**💼 Fundamental Analysis Ranking:**")
+                                    for i, (ticker, score) in enumerate(fund_ranking, 1):
+                                        st.write(f"{i}. **{ticker}** - {score}% score")
+                                
+                                # Overall recommendation
+                                st.markdown("### 💡 Overall Recommendation")
+                                
+                                # Calculate overall scores
+                                overall_scores = []
+                                for data in comparison_data:
+                                    ticker = data['Ticker']
+                                    tech_score = 0
+                                    fund_score = 0
+                                    
+                                    if data['Technical Confidence'] != 'N/A':
+                                        tech_score = float(data['Technical Confidence'].replace('%', ''))
+                                    
+                                    if data['Fundamental Score'] != 'N/A':
+                                        fund_score = float(data['Fundamental Score'].replace('%', ''))
+                                    
+                                    # Weighted average (50% technical, 50% fundamental)
+                                    overall_score = (tech_score * 0.5) + (fund_score * 0.5)
+                                    overall_scores.append((ticker, overall_score))
+                                
+                                if overall_scores:
+                                    overall_scores.sort(key=lambda x: x[1], reverse=True)
+                                    st.markdown("**🎯 Top Recommendations:**")
+                                    for i, (ticker, score) in enumerate(overall_scores[:3], 1):
+                                        st.write(f"{i}. **{ticker}** - Overall Score: {score:.1f}%")
+                                
+                        except Exception as e:
+                            st.error(f"❌ Error during comparison analysis: {str(e)}")
+                
+                else:
+                    st.info("📊 **Multiple Stocks Comparison requires at least 2 stocks.** Please add more stocks to compare.")
         
         else:
             advanced_ticker = None
