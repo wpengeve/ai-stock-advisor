@@ -1017,11 +1017,13 @@ with tab3:
                             st.rerun()
                     
                     # Process input when form is submitted (Enter key or button click)
+                    # Initialize variables outside the if block
+                    added_stocks = []
+                    search_needed = []
+                    
                     if submitted and user_input:
                         # Process the input directly (optimized)
                         items = [item.strip() for item in user_input.split(",") if item.strip()]
-                        added_stocks = []
-                        search_needed = []
                         
                         # Get popular stocks once for validation
                         popular_tickers = get_popular_tickers_set()
