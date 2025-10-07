@@ -465,7 +465,7 @@ with tab1:
                     backtester = Backtester(initial_capital=10000)
                     
                     # Technical Analysis
-                    st.markdown("#### 📈 Technical Analysis")
+                    st.markdown(f"#### 📈 Technical Analysis - {advanced_ticker}")
                     technical_signals = technical_analyzer.generate_technical_signals(advanced_ticker)
                     
                     if 'error' not in technical_signals:
@@ -501,7 +501,7 @@ with tab1:
                         st.error(f"Technical analysis error: {technical_signals.get('error', 'Unknown error')}")
                     
                     # Fundamental Analysis
-                    st.markdown("#### 💼 Fundamental Analysis")
+                    st.markdown(f"#### 💼 Fundamental Analysis - {advanced_ticker}")
                     fundamental_analysis = fundamental_analyzer.analyze_fundamentals(advanced_ticker)
                     
                     if 'error' not in fundamental_analysis:
@@ -560,7 +560,7 @@ with tab1:
                         st.error(f"Fundamental analysis error: {fundamental_analysis.get('error', 'Unknown error')}")
                     
                     # Backtesting
-                    st.markdown("#### 📈 Strategy Backtesting")
+                    st.markdown(f"#### 📈 Strategy Backtesting - {advanced_ticker}")
                     strategy_params = {
                         'rsi_period': 14,
                         'rsi_oversold': 30,
