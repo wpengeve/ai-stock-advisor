@@ -373,23 +373,81 @@ with tab1:
         st.header("🔬 ADVANCED ANALYSIS - UPDATED!")
         st.markdown("### 📈 Technical & Fundamental Analysis")
         
-        # Simple stock selection for advanced analysis
-        st.markdown("#### 🎯 Stock Selection")
+        # Multiple stock selection for advanced analysis
+        st.markdown("#### 🎯 Smart Input")
+        st.markdown("**Enter multiple stocks:** Type tickers directly (AAPL, MSFT) or company names (Apple, Target) - separate with commas")
         
-        # Simple input approach
-        advanced_ticker = st.text_input(
-            "Enter stock ticker for advanced analysis:", 
-            placeholder="e.g., AAPL",
-            help="Enter a single stock ticker symbol (e.g., AAPL, MSFT, GOOGL)"
-        )
+        # Initialize session state for advanced analysis
+        if 'advanced_selected_stocks' not in st.session_state:
+            st.session_state.advanced_selected_stocks = []
         
-        # Auto-recognition for common company names
-        if advanced_ticker:
-            ticker_upper = advanced_ticker.upper()
-            if ticker_upper in COMPANY_TO_TICKER:
-                recognized_ticker = COMPANY_TO_TICKER[ticker_upper]
-                st.info(f"✅ Recognized '{advanced_ticker}' as ticker: {recognized_ticker}")
-                advanced_ticker = recognized_ticker
+        # Smart input for multiple stocks using form
+        with st.form("advanced_stock_input", clear_on_submit=True):
+            user_input = st.text_input(
+                "Add stocks", 
+                placeholder="AAPL, Target, Amazon, MSFT, TSLA",
+                help="Type tickers directly (AAPL, MSFT) or company names (Apple, Target) - separate with commas"
+            )
+            
+            submitted = st.form_submit_button("Add Stocks")
+            
+            if submitted and user_input:
+                # Parse input
+                input_items = [item.strip() for item in user_input.split(',')]
+                input_items = [item for item in input_items if item]  # Remove empty items
+                
+                if input_items:
+                    # Process each item
+                    found_tickers = []
+                    
+                    for item in input_items:
+                        item_upper = item.upper()
+                        # Check if it's already a ticker
+                        if item_upper in COMPANY_TO_TICKER.values():
+                            found_tickers.append(item_upper)
+                        # Check if it's a company name
+                        elif item_upper in COMPANY_TO_TICKER:
+                            found_tickers.append(COMPANY_TO_TICKER[item_upper])
+                        else:
+                            # Add as-is if not recognized
+                            found_tickers.append(item_upper)
+                    
+                    if found_tickers:
+                        st.session_state.advanced_selected_stocks.extend(found_tickers)
+                        st.success(f"✅ Added {len(found_tickers)} stocks: {', '.join(found_tickers)}")
+                        st.rerun()
+        
+        # Display selected stocks
+        if st.session_state.advanced_selected_stocks:
+            st.markdown("#### 📊 Selected Stocks for Analysis")
+            st.write(f"**Stocks to analyze:** {', '.join(st.session_state.advanced_selected_stocks)}")
+            
+            # Analysis options
+            analysis_option = st.radio(
+                "Choose analysis type:",
+                ["Single Stock Detailed", "Multiple Stocks Comparison"],
+                key="advanced_analysis_option"
+            )
+            
+            if analysis_option == "Single Stock Detailed":
+                # Single stock detailed analysis
+                selected_ticker = st.selectbox(
+                    "Select stock for detailed analysis:",
+                    st.session_state.advanced_selected_stocks,
+                    key="advanced_single_ticker"
+                )
+                
+                if selected_ticker:
+                    advanced_ticker = selected_ticker
+                else:
+                    advanced_ticker = None
+            else:
+                # Multiple stocks comparison
+                advanced_ticker = None
+                st.info("Multiple stocks comparison will be implemented in the next update!")
+        
+        else:
+            advanced_ticker = None
         
         if advanced_ticker:
             with st.spinner(f"Performing comprehensive analysis for {advanced_ticker}..."):
