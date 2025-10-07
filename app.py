@@ -425,9 +425,11 @@ with tab1:
                     
                     if found_tickers:
                         st.session_state.advanced_pending_additions = found_tickers
+                        st.success(f"✅ Found tickers: {', '.join(found_tickers)}")
                     
                     if need_search:
                         st.session_state.advanced_pending_additions.extend(need_search)
+                        st.warning(f"⚠️ Need to search for: {', '.join(need_search)}")
                     
                     st.rerun()
         
@@ -453,6 +455,7 @@ with tab1:
                 
                 if selected_ticker:
                     advanced_ticker = selected_ticker
+                    st.info(f"🔍 Selected ticker for analysis: {advanced_ticker}")
                 else:
                     advanced_ticker = None
             else:
