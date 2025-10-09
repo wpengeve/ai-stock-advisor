@@ -875,13 +875,6 @@ with tab2:
         # Store results in session state
         st.session_state.analysis_results = suggestions
         
-        # Display results
-        if suggestions:
-            st.markdown("### 🧠 GPT Watchlist Suggestions")
-            st.markdown(suggestions)
-            st.info("📊 Analysis for Top 3 trending stocks")
-        else:
-            st.error("⚠️ GPT returned an empty response.")
     
     else:  # All 10 Stocks
         selected = trending[:10]
@@ -918,13 +911,6 @@ Respond in a clean readable bullet point format.
         # Store results in session state
         st.session_state.analysis_results = suggestions
         
-        # Display results
-        if suggestions and not suggestions.startswith("❌"):
-            st.markdown("### 🧠 GPT Watchlist Suggestions")
-            st.markdown(suggestions)
-            st.info("📊 Analysis for All 10 trending stocks")
-        else:
-            st.error("⚠️ GPT returned an empty response or error.")
     
     # Display existing results if available
     if st.session_state.analysis_results:
