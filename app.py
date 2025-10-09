@@ -215,8 +215,8 @@ def generate_portfolio_pdf(allocation_data, budget, tech_preference):
 
 
 def main():
-    st.set_page_config(page_title="AI Stock Advisor", page_icon="📈")
-    
+st.set_page_config(page_title="AI Stock Advisor", page_icon="📈")
+
     # Initialize session state for market selection
     if 'selected_market' not in st.session_state:
         st.session_state.selected_market = 'US'
@@ -226,7 +226,7 @@ with st.spinner("Loading trending stocks..."):
     # Get trending stocks based on selected market
     current_market = st.session_state.get('selected_market', 'US')
     if current_market == 'US':
-        trending_stocks = get_trending_stocks(limit=30)
+    trending_stocks = get_trending_stocks(limit=30)
     else:
         # For non-US markets, use popular stocks from market config with proper names
         market_config = get_market_config(current_market)
@@ -533,9 +533,10 @@ with tab1:
                                 # Fundamental Analysis
                                 fundamental_analysis = fundamental_analyzer.analyze_fundamentals(ticker)
                                 
-                                # Collect key metrics
+                                # Collect key metrics with formatted name
+                                current_market = st.session_state.get('selected_market', 'US')
                                 stock_data = {
-                                    'Ticker': ticker,
+                                    'Ticker': f"{ticker} - {get_stock_name(ticker, current_market)}",
                                     'Technical Signal': technical_signals.get('overall_signal', 'N/A') if 'error' not in technical_signals else 'Error',
                                     'RSI': f"{technical_signals.get('rsi', 0):.1f}" if 'error' not in technical_signals else 'N/A',
                                     'Technical Confidence': f"{technical_signals.get('confidence', 0)}%" if 'error' not in technical_signals else 'N/A',
@@ -565,7 +566,9 @@ with tab1:
                                 for data in comparison_data:
                                     if data['Technical Confidence'] != 'N/A':
                                         confidence = float(data['Technical Confidence'].replace('%', ''))
-                                        tech_ranking.append((data['Ticker'], confidence))
+                                        # Extract original ticker from formatted name
+                                        ticker = data['Ticker'].split(' - ')[0]
+                                        tech_ranking.append((ticker, confidence))
                                 
                                 if tech_ranking:
                                     tech_ranking.sort(key=lambda x: x[1], reverse=True)
@@ -587,7 +590,9 @@ with tab1:
                                 for data in comparison_data:
                                     if data['Fundamental Score'] != 'N/A':
                                         score = float(data['Fundamental Score'].replace('%', ''))
-                                        fund_ranking.append((data['Ticker'], score))
+                                        # Extract original ticker from formatted name
+                                        ticker = data['Ticker'].split(' - ')[0]
+                                        fund_ranking.append((ticker, score))
                                 
                                 if fund_ranking:
                                     fund_ranking.sort(key=lambda x: x[1], reverse=True)
@@ -614,6 +619,8 @@ with tab1:
                                 overall_scores = []
                                 for data in comparison_data:
                                     ticker = data['Ticker']
+                                    # Extract original ticker from formatted name
+                                    original_ticker = ticker.split(' - ')[0]
                                     tech_score = 0
                                     fund_score = 0
                                     
@@ -625,7 +632,7 @@ with tab1:
                                     
                                     # Weighted average (50% technical, 50% fundamental)
                                     overall_score = (tech_score * 0.5) + (fund_score * 0.5)
-                                    overall_scores.append((ticker, overall_score, tech_score, fund_score))
+                                    overall_scores.append((original_ticker, overall_score, tech_score, fund_score))
                                 
                                 if overall_scores:
                                     overall_scores.sort(key=lambda x: x[1], reverse=True)
@@ -671,7 +678,8 @@ with tab1:
                     backtester = Backtester(initial_capital=10000)
                     
                     # Technical Analysis
-                    st.markdown(f"#### 📈 Technical Analysis - {advanced_ticker}")
+                    current_market = st.session_state.get('selected_market', 'US')
+                    st.markdown(f"#### 📈 Technical Analysis - {advanced_ticker} - {get_stock_name(advanced_ticker, current_market)}")
                     technical_signals = technical_analyzer.generate_technical_signals(advanced_ticker)
                     
                     if 'error' not in technical_signals:
@@ -707,7 +715,7 @@ with tab1:
                         st.error(f"Technical analysis error: {technical_signals.get('error', 'Unknown error')}")
                     
                     # Fundamental Analysis
-                    st.markdown(f"#### 💼 Fundamental Analysis - {advanced_ticker}")
+                    st.markdown(f"#### 💼 Fundamental Analysis - {advanced_ticker} - {get_stock_name(advanced_ticker, current_market)}")
                     fundamental_analysis = fundamental_analyzer.analyze_fundamentals(advanced_ticker)
                     
                     if 'error' not in fundamental_analysis:
@@ -766,7 +774,7 @@ with tab1:
                         st.error(f"Fundamental analysis error: {fundamental_analysis.get('error', 'Unknown error')}")
                     
                     # Backtesting
-                    st.markdown(f"#### 📈 Strategy Backtesting - {advanced_ticker}")
+                    st.markdown(f"#### 📈 Strategy Backtesting - {advanced_ticker} - {get_stock_name(advanced_ticker, current_market)}")
                     strategy_params = {
                         'rsi_period': 14,
                         'rsi_oversold': 30,
@@ -813,12 +821,12 @@ with tab2:
 
     # Always show the trending stocks and analysis options
             # 1. Fetch 10 trending stocks
-    trending = trending_stocks[:10]
+            trending = trending_stocks[:10]
 
             # 2. Display all 10 trending stocks
-    df = pd.DataFrame(trending, columns=["Ticker", "Company"])
-    st.markdown("### 🔥 Currently Trending Tickers")
-    st.dataframe(df, hide_index=True)
+            df = pd.DataFrame(trending, columns=["Ticker", "Company"])
+            st.markdown("### 🔥 Currently Trending Tickers")
+            st.dataframe(df, hide_index=True)
 
     # 3. Use session state to prevent jumping completely
     st.markdown("**📈 Choose your analysis option:**")
@@ -829,7 +837,7 @@ with tab2:
     if 'analysis_results' not in st.session_state:
         st.session_state.analysis_results = None
     
-    choice = st.radio(
+            choice = st.radio(
         "Select analysis type:",
         ["🔝 Top 3 Only", "📊 All 10 Stocks"],
         key="analysis_choice_radio"
@@ -840,19 +848,19 @@ with tab2:
         st.session_state.last_analysis_choice = choice
         
         if choice == "🔝 Top 3 Only":
-            selected = trending[:3]
+                selected = trending[:3]
 
-            trending_formatted = "\n".join([f"- {ticker} ({name})" for ticker, name in selected])
-            prompt = f"""
-You are a stock market investment assistant.
+                trending_formatted = "\n".join([f"- {ticker} ({name})" for ticker, name in selected])
+                prompt = f"""
+            You are a stock market investment assistant.
 
-Here are the trending stocks:
-{trending_formatted}
+            Here are the trending stocks:
+            {trending_formatted}
 
-For each stock above, briefly explain whether it's a good opportunity to watch or invest in now. 
-Write 1–2 sentences for each. 
-Respond in a clean readable bullet point format.
-"""
+            For each stock above, briefly explain whether it's a good opportunity to watch or invest in now. 
+            Write 1–2 sentences for each. 
+            Respond in a clean readable bullet point format.
+            """
             with st.spinner("💭 Generating analysis for Top 3 stocks..."):
                 suggestions = suggest_stocks_to_watch(ticker_list=selected, custom_prompt=prompt)
 
@@ -942,7 +950,8 @@ with tab3:
 
         for idx, ticker in enumerate(tickers_only):
             with cols[idx]:
-                st.subheader(f"📈 {ticker}")
+                current_market = st.session_state.get('selected_market', 'US')
+                st.subheader(f"📈 {ticker} - {get_stock_name(ticker, current_market)}")
                 stock_info = get_cached_stock_summary(ticker)
                 headlines = get_all_headlines(ticker)
                 all_headlines.append((ticker, headlines))
@@ -1016,7 +1025,7 @@ with tab3:
             selected_display = st.multiselect("Select stocks to allocate", trending_display)
             selected_symbols = [s.split(" - ")[0] for s in selected_display]
             
-        else:
+                    else:
             # Manual stock entry
             st.markdown("#### ✏️ Enter Your Stock List")
             
@@ -1102,7 +1111,7 @@ with tab3:
                                 if ticker not in st.session_state.selected_stocks:
                                     st.session_state.selected_stocks.append(ticker)
                                     added_stocks.append(ticker)
-                            else:
+                else:
                                 # Company name for search
                                 search_needed.append(item)
                         
@@ -1392,7 +1401,7 @@ with tab3:
                                 fractional_shares = item['fractional_shares']
                                 fractional_allocated = item['fractional_allocated']
                                 allocation_data.append({
-                                    "Stock": ticker,
+                                    "Stock": f"{ticker} - {get_stock_name(ticker, current_market)}",
                                     "Price": format_currency(price, current_market),
                                     "Weight": f"{weight:.1%}",
                                     "Shares": f"{fractional_shares:.2f}",
@@ -1400,7 +1409,7 @@ with tab3:
                                 })
                             else:
                                 allocation_data.append({
-                                    "Stock": ticker,
+                                    "Stock": f"{ticker} - {get_stock_name(ticker, current_market)}",
                                     "Price": format_currency(price, current_market),
                                     "Weight": f"{weight:.1%}",
                                     "Shares": f"{shares:.0f}",
@@ -1476,10 +1485,10 @@ with tab3:
                                     fractional_shares = item.get('fractional_shares', 0)
                                     if fractional_shares > 0:
                                         zero_shares_data.append({
-                                            "Stock": item['ticker'],
-                                            "Price": f"${item['price']:.2f}",
+                                            "Stock": f"{item['ticker']} - {get_stock_name(item['ticker'], current_market)}",
+                                            "Price": format_currency(item['price'], current_market),
                                             "Fractional Shares": f"{fractional_shares:.2f}",
-                                            "Fractional Amount": f"${item['fractional_allocated']:.2f}"
+                                            "Fractional Amount": format_currency(item['fractional_allocated'], current_market)
                                         })
                                 
                                 if zero_shares_data:
