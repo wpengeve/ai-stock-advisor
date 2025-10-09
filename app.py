@@ -226,7 +226,7 @@ with st.spinner("Loading trending stocks..."):
     # Get trending stocks based on selected market
     current_market = st.session_state.get('selected_market', 'US')
     if current_market == 'US':
-    trending_stocks = get_trending_stocks(limit=30)
+        trending_stocks = get_trending_stocks(limit=30)
     else:
         # For non-US markets, use popular stocks from market config with proper names
         market_config = get_market_config(current_market)
@@ -820,13 +820,13 @@ with tab2:
     st.header("💡 Get Investment Suggestions")
 
     # Always show the trending stocks and analysis options
-            # 1. Fetch 10 trending stocks
-            trending = trending_stocks[:10]
+    # 1. Fetch 10 trending stocks
+    trending = trending_stocks[:10]
 
-            # 2. Display all 10 trending stocks
-            df = pd.DataFrame(trending, columns=["Ticker", "Company"])
-            st.markdown("### 🔥 Currently Trending Tickers")
-            st.dataframe(df, hide_index=True)
+    # 2. Display all 10 trending stocks
+    df = pd.DataFrame(trending, columns=["Ticker", "Company"])
+    st.markdown("### 🔥 Currently Trending Tickers")
+    st.dataframe(df, hide_index=True)
 
     # 3. Use session state to prevent jumping completely
     st.markdown("**📈 Choose your analysis option:**")
@@ -837,7 +837,7 @@ with tab2:
     if 'analysis_results' not in st.session_state:
         st.session_state.analysis_results = None
     
-            choice = st.radio(
+    choice = st.radio(
         "Select analysis type:",
         ["🔝 Top 3 Only", "📊 All 10 Stocks"],
         key="analysis_choice_radio"
@@ -861,65 +861,65 @@ with tab2:
             Write 1–2 sentences for each. 
             Respond in a clean readable bullet point format.
             """
-            with st.spinner("💭 Generating analysis for Top 3 stocks..."):
-                suggestions = suggest_stocks_to_watch(ticker_list=selected, custom_prompt=prompt)
+        with st.spinner("💭 Generating analysis for Top 3 stocks..."):
+            suggestions = suggest_stocks_to_watch(ticker_list=selected, custom_prompt=prompt)
 
-            # Store results in session state
-            st.session_state.analysis_results = suggestions
-            
-            # Display results
-            if suggestions:
-                st.markdown("### 🧠 GPT Watchlist Suggestions")
-                st.markdown(suggestions)
-                st.info("📊 Analysis for Top 3 trending stocks")
-            else:
-                st.error("⚠️ GPT returned an empty response.")
+        # Store results in session state
+        st.session_state.analysis_results = suggestions
         
-        else:  # All 10 Stocks
-            selected = trending[:10]
-            
-            # Direct GPT call for All 10
-            trending_formatted = "\n".join([f"- {ticker} ({name})" for ticker, name in selected])
-            prompt = f"""
-        You are a stock market investment assistant.
+        # Display results
+        if suggestions:
+            st.markdown("### 🧠 GPT Watchlist Suggestions")
+            st.markdown(suggestions)
+            st.info("📊 Analysis for Top 3 trending stocks")
+        else:
+            st.error("⚠️ GPT returned an empty response.")
+    
+    else:  # All 10 Stocks
+        selected = trending[:10]
+        
+        # Direct GPT call for All 10
+        trending_formatted = "\n".join([f"- {ticker} ({name})" for ticker, name in selected])
+        prompt = f"""
+You are a stock market investment assistant.
 
-        Here are the trending stocks:
-        {trending_formatted}
+Here are the trending stocks:
+{trending_formatted}
 
-        For each stock above, briefly explain whether it's a good opportunity to watch or invest in now. 
-        Write 1–2 sentences for each. 
-        Respond in a clean readable bullet point format.
-        """
-            
-            with st.spinner("💭 Generating analysis for All 10 stocks..."):
-                try:
-                    from utils.llm import client
-                    response = client.chat.completions.create(
-                        model="gpt-4",
-                        messages=[
-                            {"role": "system", "content": "You are a helpful stock research assistant."},
-                            {"role": "user", "content": prompt}
-                        ],
-                        max_tokens=2000,
-                        temperature=0.7
-                    )
-                    suggestions = response.choices[0].message.content.strip()
-                except Exception as e:
-                    suggestions = f"❌ GPT Error: {e}"
-            
-            # Store results in session state
-            st.session_state.analysis_results = suggestions
-            
-            # Display results
-            if suggestions and not suggestions.startswith("❌"):
-                st.markdown("### 🧠 GPT Watchlist Suggestions")
-                st.markdown(suggestions)
-                st.info("📊 Analysis for All 10 trending stocks")
-            else:
-                st.error("⚠️ GPT returned an empty response or error.")
+For each stock above, briefly explain whether it's a good opportunity to watch or invest in now. 
+Write 1–2 sentences for each. 
+Respond in a clean readable bullet point format.
+"""
+        
+        with st.spinner("💭 Generating analysis for All 10 stocks..."):
+            try:
+                from utils.llm import client
+                response = client.chat.completions.create(
+                    model="gpt-4",
+                    messages=[
+                        {"role": "system", "content": "You are a helpful stock research assistant."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    max_tokens=2000,
+                    temperature=0.7
+                )
+                suggestions = response.choices[0].message.content.strip()
+            except Exception as e:
+                suggestions = f"❌ GPT Error: {e}"
+        
+        # Store results in session state
+        st.session_state.analysis_results = suggestions
+        
+        # Display results
+        if suggestions and not suggestions.startswith("❌"):
+            st.markdown("### 🧠 GPT Watchlist Suggestions")
+            st.markdown(suggestions)
+            st.info("📊 Analysis for All 10 trending stocks")
+        else:
+            st.error("⚠️ GPT returned an empty response or error.")
     
     # Display existing results if available
-    elif st.session_state.analysis_results:
+    if st.session_state.analysis_results:
         st.markdown("### 🧠 GPT Watchlist Suggestions")
         st.markdown(st.session_state.analysis_results)
         
@@ -1024,8 +1024,8 @@ with tab3:
             trending_display = [f"{sym} - {name}" for sym, name in trending]
             selected_display = st.multiselect("Select stocks to allocate", trending_display)
             selected_symbols = [s.split(" - ")[0] for s in selected_display]
-            
-                    else:
+        
+        else:
             # Manual stock entry
             st.markdown("#### ✏️ Enter Your Stock List")
             
@@ -1111,7 +1111,7 @@ with tab3:
                                 if ticker not in st.session_state.selected_stocks:
                                     st.session_state.selected_stocks.append(ticker)
                                     added_stocks.append(ticker)
-                else:
+                            else:
                                 # Company name for search
                                 search_needed.append(item)
                         
