@@ -215,7 +215,7 @@ def generate_portfolio_pdf(allocation_data, budget, tech_preference):
 
 
 def main():
-    st.set_page_config(page_title="AI Stock Advisor", page_icon="📈")
+st.set_page_config(page_title="AI Stock Advisor", page_icon="📈")
 
     # Initialize session state for market selection
     if 'selected_market' not in st.session_state:
@@ -226,7 +226,7 @@ with st.spinner("Loading trending stocks..."):
     # Get trending stocks based on selected market
     current_market = st.session_state.get('selected_market', 'US')
     if current_market == 'US':
-        trending_stocks = get_trending_stocks(limit=30)
+    trending_stocks = get_trending_stocks(limit=30)
     else:
         # For non-US markets, use popular stocks from market config with proper names
         market_config = get_market_config(current_market)
@@ -822,8 +822,8 @@ with tab2:
     st.header("💡 Get Investment Suggestions")
 
     # Always show the trending stocks and analysis options
-    # 1. Fetch 10 trending stocks
-    trending = trending_stocks[:10]
+            # 1. Fetch 10 trending stocks
+            trending = trending_stocks[:10]
 
     # 2. Display all 10 trending stocks with formatted names
     current_market = st.session_state.get('selected_market', 'US')
@@ -833,8 +833,8 @@ with tab2:
         formatted_trending.append((sym, formatted_name))
     
     df = pd.DataFrame(formatted_trending, columns=["Ticker", "Company"])
-    st.markdown("### 🔥 Currently Trending Tickers")
-    st.dataframe(df, hide_index=True)
+            st.markdown("### 🔥 Currently Trending Tickers")
+            st.dataframe(df, hide_index=True)
 
     # 3. Use session state to prevent jumping completely
     st.markdown("**📈 Choose your analysis option:**")
@@ -845,7 +845,7 @@ with tab2:
     if 'analysis_results' not in st.session_state:
         st.session_state.analysis_results = None
     
-    choice = st.radio(
+            choice = st.radio(
         "Select analysis type:",
         ["🔝 Top 3 Only", "📊 All 10 Stocks"],
         key="analysis_choice_radio"
@@ -856,19 +856,19 @@ with tab2:
         st.session_state.last_analysis_choice = choice
         
         if choice == "🔝 Top 3 Only":
-            selected = trending[:3]
+                selected = trending[:3]
 
             trending_formatted = "\n".join([f"- {ticker} ({get_stock_name(ticker, current_market)})" for ticker, name in selected])
-            prompt = f"""
-        You are a stock market investment assistant.
+                prompt = f"""
+            You are a stock market investment assistant.
 
-        Here are the trending stocks:
-        {trending_formatted}
+            Here are the trending stocks:
+            {trending_formatted}
 
-        For each stock above, briefly explain whether it's a good opportunity to watch or invest in now. 
-        Write 1–2 sentences for each. 
-        Respond in a clean readable bullet point format.
-        """
+            For each stock above, briefly explain whether it's a good opportunity to watch or invest in now. 
+            Write 1–2 sentences for each. 
+            Respond in a clean readable bullet point format.
+            """
             with st.spinner("💭 Generating analysis for Top 3 stocks..."):
                 suggestions = suggest_stocks_to_watch(ticker_list=selected, custom_prompt=prompt)
 
@@ -914,7 +914,7 @@ with tab2:
     
     # Display existing results if available
     if st.session_state.analysis_results:
-        st.markdown("### 🧠 GPT Watchlist Suggestions")
+                st.markdown("### 🧠 GPT Watchlist Suggestions")
         st.markdown(st.session_state.analysis_results)
         
         if st.session_state.last_analysis_choice == "🔝 Top 3 Only":
@@ -926,7 +926,8 @@ with tab3:
     st.header("📋 Compare Multiple Stocks Side by Side")
 
     trending = trending_stocks[:10]
-    ticker_choices = [f"{sym} - {name}" for sym, name in trending]
+    current_market = st.session_state.get('selected_market', 'US')
+    ticker_choices = [f"{sym} - {get_stock_name(sym, current_market)}" for sym, name in trending]
 
     selected_tickers = st.multiselect(
         "Pick 2 or 3 stocks to compare:",
@@ -964,8 +965,14 @@ with tab3:
                     price_change,
                     headlines
                 )
-                summaries.append((ticker, summary))
+                summaries.append((ticker, summary, price_change))
                 st.markdown(summary)
+
+        # Generate comparison summary
+        if len(summaries) >= 2:
+            comparison_summary = compare_risks_between_stocks(summaries)
+            st.markdown("### 📊 Comparison Summary")
+            st.markdown(comparison_summary)
 
         # Add GPT risk comparison section
         if len(tickers_only) >= 2:
@@ -981,6 +988,8 @@ with tab3:
             # - Use the data tables for your records
             # """)
             pass
+    else:
+        st.info("Please select at least 2 stocks to compare.")
     
     with tab4:
         st.header("💰 Portfolio Allocator")
@@ -1015,7 +1024,7 @@ with tab3:
             # Original trending stocks functionality
             trending = trending_stocks  # list of (symbol, name)
             trending_symbols = [sym for sym, name in trending]
-            trending_display = [f"{sym} - {name}" for sym, name in trending]
+            trending_display = [f"{sym} - {get_stock_name(sym, current_market)}" for sym, name in trending]
             selected_display = st.multiselect("Select stocks to allocate", trending_display)
             selected_symbols = [s.split(" - ")[0] for s in selected_display]
         
@@ -1105,7 +1114,7 @@ with tab3:
                                 if ticker not in st.session_state.selected_stocks:
                                     st.session_state.selected_stocks.append(ticker)
                                     added_stocks.append(ticker)
-                            else:
+                else:
                                 # Company name for search
                                 search_needed.append(item)
                         
@@ -1208,7 +1217,19 @@ with tab3:
             with input_tab2:
                 st.markdown("**Quick select from popular stocks:**")
                 
-                popular_stocks = cached_get_popular_stocks()
+                # Get market-specific popular stocks
+                if current_market == 'US':
+                    popular_stocks = cached_get_popular_stocks()
+                else:
+                    # For non-US markets, use market config popular stocks
+                    market_popular_tickers = get_market_popular_stocks(current_market)
+                    popular_stocks = []
+                    for ticker in market_popular_tickers[:20]:  # Limit to 20 stocks
+                        popular_stocks.append({
+                            'ticker': ticker,
+                            'name': get_stock_name(ticker, current_market),
+                            'sector': 'General'  # Default sector
+                        })
                 
                 # Group by sector for better organization
                 sectors = {}
@@ -1279,7 +1300,9 @@ with tab3:
                 for ticker in selected_symbols:
                     price = prices.get(ticker)
                     if price:
-                        price_data.append({"Ticker": ticker, "Current Price": f"${price:.2f}"})
+                        formatted_name = get_stock_name(ticker, current_market)
+                        formatted_price = format_currency(price, current_market)
+                        price_data.append({"Ticker": f"{ticker} - {formatted_name}", "Current Price": formatted_price})
                 
                 if price_data:
                     st.dataframe(pd.DataFrame(price_data), use_container_width=True, hide_index=True)
@@ -1296,8 +1319,9 @@ with tab3:
                 st.markdown("**📈 Market Analysis:**")
                 insight_data = []
                 for ticker in selected_symbols:
+                    formatted_name = get_stock_name(ticker, current_market)
                     insight_data.append({
-                        "Ticker": ticker,
+                        "Ticker": f"{ticker} - {formatted_name}",
                         "Market Insights": insights.get(ticker, "📊 Data unavailable")
                     })
                 
@@ -1320,8 +1344,9 @@ with tab3:
                     weight_data = []
                     for ticker in selected_symbols:
                         weight = recommended_weights.get(ticker, 0)
+                        formatted_name = get_stock_name(ticker, current_market)
                         weight_data.append({
-                            "Ticker": ticker,
+                            "Ticker": f"{ticker} - {formatted_name}",
                             "Recommended Weight": f"{weight:.1%}",
                             "Reasoning": insights.get(ticker, "📊 Standard allocation")
                         })
