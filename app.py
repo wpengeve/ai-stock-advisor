@@ -317,7 +317,9 @@ with tab1:
     if selected_stocks:
         for selected_option in selected_stocks:
             ticker = selected_option.split(" - ")[0]
-            st.markdown(f"### 📊 Summary for **{ticker}**")
+            current_market = st.session_state.get('selected_market', 'US')
+            formatted_name = get_stock_name(ticker, current_market)
+            st.markdown(f"### 📊 Summary for **{ticker} - {formatted_name}**")
 
             with st.spinner(f"Fetching data for {ticker}..."):
                 stock_info = get_cached_stock_summary(ticker)
@@ -342,11 +344,11 @@ with tab1:
                 price_change = ((hist["Close"].iloc[-1] - hist["Close"].iloc[0]) / hist["Close"].iloc[0]) * 100
 
                 # Price Chart
-                st.markdown(f"### 📉 5-Day Price Trend for {ticker}")
+                st.markdown(f"### 📉 5-Day Price Trend for {ticker} - {formatted_name}")
                 fig = go.Figure()
-                fig.add_trace(go.Scatter(x=hist.index, y=hist["Close"], mode='lines+markers', name=f"{ticker} Price"))
+                fig.add_trace(go.Scatter(x=hist.index, y=hist["Close"], mode='lines+markers', name=f"{ticker} - {formatted_name}"))
                 fig.update_layout(
-                    title=f"{ticker} 5-Day Price Trend",
+                    title=f"{ticker} - {formatted_name} 5-Day Price Trend",
                     xaxis_title="Date", yaxis_title="Price ($)",
                     hovermode="x unified", xaxis_tickangle=-45
                 )
