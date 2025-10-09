@@ -28,7 +28,7 @@ from data_sources.stock_prices import get_cached_stock_summary
 from portfolio.portfolio_allocator import fetch_current_prices, allocate_portfolio, allocate_portfolio_with_sector_preference, search_companies, get_popular_stocks, generate_weight_recommendations, get_market_insights, get_stock_sectors
 
 # Multi-market support
-from utils.market_config import MARKET_CONFIGS, get_market_config, get_market_companies, format_ticker, format_currency, get_popular_stocks as get_market_popular_stocks, get_market_sectors
+from utils.market_config import MARKET_CONFIGS, get_market_config, get_market_companies, format_ticker, format_currency, get_popular_stocks as get_market_popular_stocks, get_market_sectors, get_stock_name
 
 # Company name to ticker mapping for auto-recognition (US default)
 COMPANY_TO_TICKER = {
@@ -228,10 +228,10 @@ with st.spinner("Loading trending stocks..."):
     if current_market == 'US':
         trending_stocks = get_trending_stocks(limit=30)
     else:
-        # For non-US markets, use popular stocks from market config
+        # For non-US markets, use popular stocks from market config with proper names
         market_config = get_market_config(current_market)
         popular_stocks = get_market_popular_stocks(current_market)
-        trending_stocks = [(ticker, f"Popular {current_market} Stock") for ticker in popular_stocks[:10]]
+        trending_stocks = [(ticker, get_stock_name(ticker, current_market)) for ticker in popular_stocks[:10]]
 
     # Header section above tab navigation
     st.title("🤖 AI Stock Advisor")
@@ -298,7 +298,12 @@ with tab1:
             st.error(f"❌ Unexpected error while fetching {sym}: {e}")
             trending_with_change.append((sym, name, 0.0))
 
-    tickers_display = [f"{sym} - {name} ({change:+.2f}%)" for sym, name, change in trending_with_change]
+    # Format tickers with market-specific names (Mandarin + English for Asian markets)
+    current_market = st.session_state.get('selected_market', 'US')
+    tickers_display = []
+    for sym, name, change in trending_with_change:
+        formatted_name = get_stock_name(sym, current_market)
+        tickers_display.append(f"{sym} - {formatted_name} ({change:+.2f}%)")
 
     selected_stocks = st.multiselect("📈 Pick one or more trending stocks to summarize", options=tickers_display)
 

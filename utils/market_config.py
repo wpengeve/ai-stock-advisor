@@ -24,6 +24,18 @@ MARKET_CONFIGS = {
         "trading_hours": "9:00 AM - 1:30 PM CST",
         "timezone": "Asia/Taipei",
         "popular_stocks": ["2330.TW", "2317.TW", "2454.TW", "2382.TW", "6505.TW", "2881.TW", "2882.TW", "2891.TW", "1102.TW", "2002.TW"],
+        "stock_names": {
+            "2330.TW": "台積電 (TSMC)",
+            "2317.TW": "鴻海 (Hon Hai)",
+            "2454.TW": "聯發科 (MediaTek)",
+            "2382.TW": "廣達 (Quanta)",
+            "6505.TW": "台塑 (Formosa Plastics)",
+            "2881.TW": "富邦金 (Fubon Financial)",
+            "2882.TW": "國泰金 (Cathay Financial)",
+            "2891.TW": "中信金 (CTBC Financial)",
+            "1102.TW": "亞泥 (Asia Cement)",
+            "2002.TW": "中鋼 (China Steel)"
+        },
         "sectors": ["Semiconductors", "Technology", "Financial", "Traditional Industries", "Biotech", "Energy", "Materials", "Utilities", "Real Estate", "Communication"]
     },
     "HK": {
@@ -35,6 +47,18 @@ MARKET_CONFIGS = {
         "trading_hours": "9:30 AM - 4:00 PM HKT",
         "timezone": "Asia/Hong_Kong",
         "popular_stocks": ["0700.HK", "0941.HK", "1299.HK", "1398.HK", "3988.HK", "2318.HK", "2628.HK", "0939.HK", "0388.HK", "3690.HK"],
+        "stock_names": {
+            "0700.HK": "騰訊 (Tencent)",
+            "0941.HK": "中國移動 (China Mobile)",
+            "1299.HK": "友邦保險 (AIA)",
+            "1398.HK": "工商銀行 (ICBC)",
+            "3988.HK": "中國銀行 (Bank of China)",
+            "2318.HK": "平安保險 (Ping An)",
+            "2628.HK": "中國人壽 (China Life)",
+            "0939.HK": "建設銀行 (CCB)",
+            "0388.HK": "香港交易所 (HKEX)",
+            "3690.HK": "美團 (Meituan)"
+        },
         "sectors": ["Technology", "Financial", "Real Estate", "Energy", "Utilities", "Consumer", "Healthcare", "Materials", "Industrial", "Communication"]
     },
     "JP": {
@@ -57,6 +81,18 @@ MARKET_CONFIGS = {
         "trading_hours": "9:30 AM - 3:00 PM CST",
         "timezone": "Asia/Shanghai",
         "popular_stocks": ["600036.SS", "600519.SS", "000858.SZ", "002415.SZ", "300059.SZ", "600276.SS", "000725.SZ", "002594.SZ", "600887.SS", "000001.SZ"],
+        "stock_names": {
+            "600036.SS": "招商銀行 (China Merchants Bank)",
+            "600519.SS": "貴州茅台 (Kweichow Moutai)",
+            "000858.SZ": "五糧液 (Wuliangye)",
+            "002415.SZ": "海康威視 (Hikvision)",
+            "300059.SZ": "東方財富 (East Money)",
+            "600276.SS": "恒瑞醫藥 (Jiangsu Hengrui)",
+            "000725.SZ": "京東方 (BOE Technology)",
+            "002594.SZ": "比亞迪 (BYD)",
+            "600887.SS": "伊利股份 (Inner Mongolia Yili)",
+            "000001.SZ": "平安銀行 (Ping An Bank)"
+        },
         "sectors": ["Technology", "Financial", "Consumer", "Industrial", "Healthcare", "Energy", "Materials", "Utilities", "Real Estate", "Communication"]
     },
     "KR": {
@@ -217,3 +253,15 @@ def get_market_sectors(market_code):
     """Get sectors for a market"""
     config = get_market_config(market_code)
     return config.get("sectors", [])
+
+def get_stock_name(ticker, market_code):
+    """Get formatted stock name with Mandarin and English"""
+    config = get_market_config(market_code)
+    stock_names = config.get("stock_names", {})
+    
+    # If we have a specific name mapping, use it
+    if ticker in stock_names:
+        return stock_names[ticker]
+    
+    # Otherwise, return just the ticker
+    return ticker
