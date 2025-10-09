@@ -825,8 +825,14 @@ with tab2:
     # 1. Fetch 10 trending stocks
     trending = trending_stocks[:10]
 
-    # 2. Display all 10 trending stocks
-    df = pd.DataFrame(trending, columns=["Ticker", "Company"])
+    # 2. Display all 10 trending stocks with formatted names
+    current_market = st.session_state.get('selected_market', 'US')
+    formatted_trending = []
+    for sym, name in trending:
+        formatted_name = get_stock_name(sym, current_market)
+        formatted_trending.append((sym, formatted_name))
+    
+    df = pd.DataFrame(formatted_trending, columns=["Ticker", "Company"])
     st.markdown("### 🔥 Currently Trending Tickers")
     st.dataframe(df, hide_index=True)
 
@@ -852,7 +858,7 @@ with tab2:
         if choice == "🔝 Top 3 Only":
                 selected = trending[:3]
 
-                trending_formatted = "\n".join([f"- {ticker} ({name})" for ticker, name in selected])
+                trending_formatted = "\n".join([f"- {ticker} ({get_stock_name(ticker, current_market)})" for ticker, name in selected])
                 prompt = f"""
             You are a stock market investment assistant.
 
@@ -881,7 +887,7 @@ with tab2:
         selected = trending[:10]
         
         # Direct GPT call for All 10
-        trending_formatted = "\n".join([f"- {ticker} ({name})" for ticker, name in selected])
+        trending_formatted = "\n".join([f"- {ticker} ({get_stock_name(ticker, current_market)})" for ticker, name in selected])
         prompt = f"""
 You are a stock market investment assistant.
 
