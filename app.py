@@ -28,7 +28,7 @@ from data_sources.stock_prices import get_cached_stock_summary
 from portfolio.portfolio_allocator import fetch_current_prices, allocate_portfolio, allocate_portfolio_with_sector_preference, search_companies, get_popular_stocks, generate_weight_recommendations, get_market_insights, get_stock_sectors
 
 # Multi-market support
-from utils.market_config import MARKET_CONFIGS, get_market_config, get_market_companies, format_ticker, format_currency, get_popular_stocks, get_market_sectors
+from utils.market_config import MARKET_CONFIGS, get_market_config, get_market_companies, format_ticker, format_currency, get_popular_stocks as get_market_popular_stocks, get_market_sectors
 
 # Company name to ticker mapping for auto-recognition (US default)
 COMPANY_TO_TICKER = {
@@ -252,7 +252,7 @@ with st.spinner("Loading trending stocks..."):
     else:
         # For non-US markets, use popular stocks from market config
         market_config = get_market_config(current_market)
-        popular_stocks = get_popular_stocks(current_market)
+        popular_stocks = get_market_popular_stocks(current_market)
         trending_stocks = [(ticker, f"Popular {current_market} Stock") for ticker in popular_stocks[:10]]
 
     # Header section above tab navigation
