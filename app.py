@@ -27,7 +27,10 @@ from data_sources.earnings_reports import fetch_earnings_for_stock
 from data_sources.stock_prices import get_cached_stock_summary
 from portfolio.portfolio_allocator import fetch_current_prices, allocate_portfolio, allocate_portfolio_with_sector_preference, search_companies, get_popular_stocks, generate_weight_recommendations, get_market_insights, get_stock_sectors
 
-# Company name to ticker mapping for auto-recognition
+# Multi-market support
+from utils.market_config import MARKET_CONFIGS, get_market_config, get_market_companies, format_ticker, format_currency, get_popular_stocks, get_market_sectors
+
+# Company name to ticker mapping for auto-recognition (US default)
 COMPANY_TO_TICKER = {
     'APPLE': 'AAPL',
     'MICROSOFT': 'MSFT', 
@@ -76,6 +79,14 @@ COMPANY_TO_TICKER = {
     'EXXON': 'XOM',
     'EXXON MOBIL': 'XOM'
 }
+
+def get_company_mapping():
+    """Get company mapping for the current selected market"""
+    current_market = st.session_state.get('selected_market', 'US')
+    market_companies = get_market_companies(current_market)
+    # Combine with default US mapping for fallback
+    combined_mapping = {**COMPANY_TO_TICKER, **market_companies}
+    return combined_mapping
 
 # Cache functions for better performance
 @st.cache_data(ttl=3600)  # Cache for 1 hour instead of default
@@ -206,9 +217,43 @@ def generate_portfolio_pdf(allocation_data, budget, tech_preference):
 def main():
     st.set_page_config(page_title="AI Stock Advisor", page_icon="📈")
 
+    # Initialize session state for market selection
+    if 'selected_market' not in st.session_state:
+        st.session_state.selected_market = 'US'
+
+    # Market selector at the top
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        selected_market = st.selectbox(
+            "🌍 Select Market:",
+            options=list(MARKET_CONFIGS.keys()),
+            format_func=lambda x: MARKET_CONFIGS[x]['name'],
+            index=list(MARKET_CONFIGS.keys()).index(st.session_state.selected_market),
+            key="market_selector"
+        )
+        
+        # Update session state when market changes
+        if selected_market != st.session_state.selected_market:
+            st.session_state.selected_market = selected_market
+            st.rerun()
+
+    # Get current market configuration
+    market_config = get_market_config(st.session_state.selected_market)
+    
+    # Display market info
+    st.info(f"📊 **Current Market:** {market_config['name']} | 💰 **Currency:** {market_config['currency']} | ⏰ **Trading Hours:** {market_config['trading_hours']}")
+
 # ✅ Add spinner while fetching trending stocks
 with st.spinner("Loading trending stocks..."):
-    trending_stocks = get_trending_stocks(limit=30)
+    # Get trending stocks based on selected market
+    current_market = st.session_state.get('selected_market', 'US')
+    if current_market == 'US':
+        trending_stocks = get_trending_stocks(limit=30)
+    else:
+        # For non-US markets, use popular stocks from market config
+        market_config = get_market_config(current_market)
+        popular_stocks = get_popular_stocks(current_market)
+        trending_stocks = [(ticker, f"Popular {current_market} Stock") for ticker in popular_stocks[:10]]
 
     # Header section above tab navigation
     st.title("🤖 AI Stock Advisor")
@@ -401,12 +446,14 @@ with tab1:
                     
                     for item in input_items:
                         item_upper = item.upper()
+                        # Get current market company mapping
+                        company_mapping = get_company_mapping()
                         # Check if it's already a ticker
-                        if item_upper in COMPANY_TO_TICKER.values():
+                        if item_upper in company_mapping.values():
                             found_tickers.append(item_upper)
                         # Check if it's a company name
-                        elif item_upper in COMPANY_TO_TICKER:
-                            found_tickers.append(COMPANY_TO_TICKER[item_upper])
+                        elif item_upper in company_mapping:
+                            found_tickers.append(company_mapping[item_upper])
                         else:
                             # Add as-is if not recognized
                             found_tickers.append(item_upper)
@@ -929,7 +976,10 @@ with tab3:
         st.header("💰 Portfolio Allocator")
         st.markdown("Suggest how to allocate your budget across selected stocks with sector preferences.")
         
-        budget = st.number_input("Enter your total budget ($)", min_value=100.0, value=1000.0, step=10.0)
+        current_market = st.session_state.get('selected_market', 'US')
+        market_config = get_market_config(current_market)
+        currency_symbol = market_config.get('currency_symbol', '$')
+        budget = st.number_input(f"Enter your total budget ({currency_symbol})", min_value=100.0, value=1000.0, step=10.0)
         
         # Tech preference slider
         tech_preference = st.slider(
@@ -1040,8 +1090,8 @@ with tab3:
                                     st.session_state.selected_stocks.append(item_upper)
                                     added_stocks.append(item_upper)
                             # Check if it's a known company name (auto-recognition)
-                            elif item_upper in COMPANY_TO_TICKER:
-                                ticker = COMPANY_TO_TICKER[item_upper]
+                            elif item_upper in get_company_mapping():
+                                ticker = get_company_mapping()[item_upper]
                                 if ticker not in st.session_state.selected_stocks:
                                     st.session_state.selected_stocks.append(ticker)
                                     added_stocks.append(ticker)
@@ -1336,18 +1386,18 @@ with tab3:
                                 fractional_allocated = item['fractional_allocated']
                                 allocation_data.append({
                                     "Stock": ticker,
-                                    "Price": f"${price:.2f}",
+                                    "Price": format_currency(price, current_market),
                                     "Weight": f"{weight:.1%}",
                                     "Shares": f"{fractional_shares:.2f}",
-                                    "Amount": f"${fractional_allocated:,.2f}"
+                                    "Amount": format_currency(fractional_allocated, current_market)
                                 })
                             else:
                                 allocation_data.append({
                                     "Stock": ticker,
-                                    "Price": f"${price:.2f}",
+                                    "Price": format_currency(price, current_market),
                                     "Weight": f"{weight:.1%}",
                                     "Shares": f"{shares:.0f}",
-                                    "Amount": f"${allocated:,.2f}"
+                                    "Amount": format_currency(allocated, current_market)
                                 })
                         
                         # Add total row
@@ -1356,7 +1406,7 @@ with tab3:
                             "Price": "",
                             "Weight": "**100%**",
                             "Shares": "",
-                            "Amount": f"**${total_invested:,.2f}**"
+                            "Amount": f"**{format_currency(total_invested, current_market)}**"
                         })
                         
                         st.dataframe(pd.DataFrame(allocation_data), use_container_width=True, hide_index=True)
@@ -1365,11 +1415,12 @@ with tab3:
                         st.markdown("### 💰 Budget Analysis")
                         col1, col2, col3 = st.columns(3)
                         with col1:
-                            st.metric("Total Budget", f"${budget:,.2f}")
+                            current_market = st.session_state.get('selected_market', 'US')
+                            st.metric("Total Budget", format_currency(budget, current_market))
                         with col2:
-                            st.metric("Allocated (Whole Shares)", f"${total_invested:,.2f}")
+                            st.metric("Allocated (Whole Shares)", format_currency(total_invested, current_market))
                         with col3:
-                            st.metric("Unused Budget", f"${unused_budget:,.2f}")
+                            st.metric("Unused Budget", format_currency(unused_budget, current_market))
                         
                         # Show budget utilization percentage
                         utilization_pct = (total_invested / budget) * 100
@@ -1430,12 +1481,14 @@ with tab3:
                             # Calculate potential with fractional shares
                             total_fractional = sum(item.get('fractional_allocated', item['allocated']) for item in allocation)
                             if total_fractional > total_invested:
-                                st.info(f"💡 **With fractional shares**: Could utilize ${total_fractional:,.2f} ({(total_fractional/budget)*100:.1f}% of budget)")
+                                current_market = st.session_state.get('selected_market', 'US')
+                                st.info(f"💡 **With fractional shares**: Could utilize {format_currency(total_fractional, current_market)} ({(total_fractional/budget)*100:.1f}% of budget)")
                             
                             # Budget scaling recommendations
                             if unused_budget > budget * 0.3:
                                 suggested_budget = budget * 1.5
-                                st.info(f"💡 **Consider increasing budget to ${suggested_budget:,.2f}** for better diversification")
+                                current_market = st.session_state.get('selected_market', 'US')
+                                st.info(f"💡 **Consider increasing budget to {format_currency(suggested_budget, current_market)}** for better diversification")
                             
                             # Smart stock suggestions for better budget utilization
                             st.markdown("### 🎯 SMART STOCK SELECTION GUIDE - UPDATED!")
@@ -1450,10 +1503,11 @@ with tab3:
                                 col1, col2 = st.columns(2)
                                 
                                 with col1:
-                                    st.metric("Current Average Price", f"${avg_price:.2f}", "❌ Too High")
+                                    current_market = st.session_state.get('selected_market', 'US')
+                                    st.metric("Current Average Price", format_currency(avg_price, current_market), "❌ Too High")
                                 
                                 with col2:
-                                    st.metric("Recommended Average Price", f"${budget * 0.1:.2f}", "✅ Ideal")
+                                    st.metric("Recommended Average Price", format_currency(budget * 0.1, current_market), "✅ Ideal")
                                 
                                 st.markdown("**💡 Better stock selection strategies:**")
                                 
