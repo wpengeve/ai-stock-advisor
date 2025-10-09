@@ -241,21 +241,23 @@ with st.spinner("Loading trending stocks..."):
     # Market selector right below the header
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
+        # Get current market with fallback to US
+        current_market = st.session_state.get('selected_market', 'US')
         selected_market = st.selectbox(
             "🌍 Select Market:",
             options=list(MARKET_CONFIGS.keys()),
             format_func=lambda x: MARKET_CONFIGS[x]['name'],
-            index=list(MARKET_CONFIGS.keys()).index(st.session_state.selected_market),
+            index=list(MARKET_CONFIGS.keys()).index(current_market),
             key="market_selector"
         )
         
         # Update session state when market changes
-        if selected_market != st.session_state.selected_market:
+        if selected_market != current_market:
             st.session_state.selected_market = selected_market
             st.rerun()
 
     # Get current market configuration
-    market_config = get_market_config(st.session_state.selected_market)
+    market_config = get_market_config(current_market)
     
     # Display market info
     st.info(f"📊 **Current Market:** {market_config['name']} | 💰 **Currency:** {market_config['currency']} | ⏰ **Trading Hours:** {market_config['trading_hours']}")
