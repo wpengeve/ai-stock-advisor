@@ -216,14 +216,21 @@ def generate_portfolio_pdf(allocation_data, budget, tech_preference):
 
 def main():
     st.set_page_config(page_title="AI Stock Advisor", page_icon="📈")
+    
+    # Debug: Show that app is loading
+    st.write("🔍 App is loading...")
 
     # Initialize session state for market selection
     if 'selected_market' not in st.session_state:
         st.session_state.selected_market = 'US'
 
+    # Debug: Show market config
+    st.write(f"🔍 Market configs available: {list(MARKET_CONFIGS.keys())}")
+    
     # Market selector at the top
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
+        st.write("🔍 About to show market selector...")
         selected_market = st.selectbox(
             "🌍 Select Market:",
             options=list(MARKET_CONFIGS.keys()),
@@ -231,6 +238,7 @@ def main():
             index=list(MARKET_CONFIGS.keys()).index(st.session_state.selected_market),
             key="market_selector"
         )
+        st.write(f"🔍 Selected market: {selected_market}")
         
         # Update session state when market changes
         if selected_market != st.session_state.selected_market:
