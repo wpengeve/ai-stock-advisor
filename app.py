@@ -856,60 +856,60 @@ with tab2:
         st.session_state.last_analysis_choice = choice
         
         if choice == "🔝 Top 3 Only":
-                selected = trending[:3]
+            selected = trending[:3]
 
-                trending_formatted = "\n".join([f"- {ticker} ({get_stock_name(ticker, current_market)})" for ticker, name in selected])
-                prompt = f"""
-            You are a stock market investment assistant.
+            trending_formatted = "\n".join([f"- {ticker} ({get_stock_name(ticker, current_market)})" for ticker, name in selected])
+            prompt = f"""
+        You are a stock market investment assistant.
 
-            Here are the trending stocks:
-            {trending_formatted}
+        Here are the trending stocks:
+        {trending_formatted}
 
-            For each stock above, briefly explain whether it's a good opportunity to watch or invest in now. 
-            Write 1–2 sentences for each. 
-            Respond in a clean readable bullet point format.
-            """
-        with st.spinner("💭 Generating analysis for Top 3 stocks..."):
-            suggestions = suggest_stocks_to_watch(ticker_list=selected, custom_prompt=prompt)
+        For each stock above, briefly explain whether it's a good opportunity to watch or invest in now. 
+        Write 1–2 sentences for each. 
+        Respond in a clean readable bullet point format.
+        """
+            with st.spinner("💭 Generating analysis for Top 3 stocks..."):
+                suggestions = suggest_stocks_to_watch(ticker_list=selected, custom_prompt=prompt)
 
-        # Store results in session state
-        st.session_state.analysis_results = suggestions
+            # Store results in session state
+            st.session_state.analysis_results = suggestions
         
     
-    else:  # All 10 Stocks
-        selected = trending[:10]
-        
-        # Direct GPT call for All 10
-        trending_formatted = "\n".join([f"- {ticker} ({get_stock_name(ticker, current_market)})" for ticker, name in selected])
-        prompt = f"""
-You are a stock market investment assistant.
+        else:  # All 10 Stocks
+            selected = trending[:10]
+            
+            # Direct GPT call for All 10
+            trending_formatted = "\n".join([f"- {ticker} ({get_stock_name(ticker, current_market)})" for ticker, name in selected])
+            prompt = f"""
+        You are a stock market investment assistant.
 
-Here are the trending stocks:
-{trending_formatted}
+        Here are the trending stocks:
+        {trending_formatted}
 
-For each stock above, briefly explain whether it's a good opportunity to watch or invest in now. 
-Write 1–2 sentences for each. 
-Respond in a clean readable bullet point format.
-"""
-        
-        with st.spinner("💭 Generating analysis for All 10 stocks..."):
-            try:
-                from utils.llm import client
-                response = client.chat.completions.create(
-                    model="gpt-4",
-                    messages=[
-                        {"role": "system", "content": "You are a helpful stock research assistant."},
-                        {"role": "user", "content": prompt}
-                    ],
-                    max_tokens=2000,
-                    temperature=0.7
-                )
-                suggestions = response.choices[0].message.content.strip()
-            except Exception as e:
-                suggestions = f"❌ GPT Error: {e}"
-        
-        # Store results in session state
-        st.session_state.analysis_results = suggestions
+        For each stock above, briefly explain whether it's a good opportunity to watch or invest in now. 
+        Write 1–2 sentences for each. 
+        Respond in a clean readable bullet point format.
+        """
+            
+            with st.spinner("💭 Generating analysis for All 10 stocks..."):
+                try:
+                    from utils.llm import client
+                    response = client.chat.completions.create(
+                        model="gpt-4",
+                        messages=[
+                            {"role": "system", "content": "You are a helpful stock research assistant."},
+                            {"role": "user", "content": prompt}
+                        ],
+                        max_tokens=2000,
+                        temperature=0.7
+                    )
+                    suggestions = response.choices[0].message.content.strip()
+                except Exception as e:
+                    suggestions = f"❌ GPT Error: {e}"
+            
+            # Store results in session state
+            st.session_state.analysis_results = suggestions
         
     
     # Display existing results if available
