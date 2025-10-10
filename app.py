@@ -476,7 +476,7 @@ with tab1:
         # Display selected stocks
         if st.session_state.advanced_selected_stocks:
             st.markdown("#### 📊 Selected Stocks for Analysis")
-                        st.write(f"**Stocks to analyze:** {', '.join(st.session_state.advanced_selected_stocks)}")
+            st.write(f"**Stocks to analyze:** {', '.join(st.session_state.advanced_selected_stocks)}")
                         
                         # Analysis options - default to Single Stock Detailed
                         analysis_option = st.radio(
