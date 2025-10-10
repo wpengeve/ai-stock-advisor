@@ -662,9 +662,9 @@ with tab1:
                 st.info("📊 **Multiple Stocks Comparison requires at least 2 stocks.** Please add more stocks to compare.")
         
         else:
-                    advanced_ticker = None
-                
-                if advanced_ticker:
+            advanced_ticker = None
+        
+        if advanced_ticker:
                     with st.spinner(f"Performing comprehensive analysis for {advanced_ticker}..."):
                         try:
                             # Import analysis modules
