@@ -853,9 +853,9 @@ with tab2:
     # Check if choice changed and process accordingly
     if choice != st.session_state.last_analysis_choice:
         st.session_state.last_analysis_choice = choice
-                
-                if choice == "🔝 Top 3 Only":
-                selected = trending[:3]
+        
+        if choice == "🔝 Top 3 Only":
+            selected = trending[:3]
 
                     trending_formatted = "\n".join([f"- {ticker} ({get_stock_name(ticker, current_market)})" for ticker, name in selected])
                 prompt = f"""
