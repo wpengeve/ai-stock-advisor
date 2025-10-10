@@ -857,7 +857,7 @@ with tab2:
         if choice == "🔝 Top 3 Only":
             selected = trending[:3]
 
-                    trending_formatted = "\n".join([f"- {ticker} ({get_stock_name(ticker, current_market)})" for ticker, name in selected])
+            trending_formatted = "\n".join([f"- {ticker} ({get_stock_name(ticker, current_market)})" for ticker, name in selected])
                 prompt = f"""
             You are a stock market investment assistant.
 
