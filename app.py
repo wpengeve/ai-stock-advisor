@@ -821,11 +821,17 @@ with tab2:
     st.header("💡 Get Investment Suggestions")
 
     # Always show the trending stocks and analysis options
-    # 1. Fetch 10 trending stocks
-    trending = trending_stocks[:10]
-
-    # 2. Display all 10 trending stocks with formatted names
+    # 1. Fetch trending stocks based on current market selection
     current_market = st.session_state.get('selected_market', 'US')
+    
+    if current_market == 'US':
+        trending = get_trending_stocks(limit=10)
+    else:
+        # For non-US markets, use popular stocks from market config with proper names
+        popular_stocks = get_market_popular_stocks(current_market)
+        trending = [(ticker, get_stock_name(ticker, current_market)) for ticker in popular_stocks[:10]]
+
+    # 2. Display all trending stocks with formatted names
     formatted_trending = []
     for sym, name in trending:
         formatted_name = get_stock_name(sym, current_market)
