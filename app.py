@@ -868,7 +868,7 @@ with tab2:
             Write 1–2 sentences for each. 
             Respond in a clean readable bullet point format.
             """
-                    with st.spinner("💭 Generating analysis for Top 3 stocks..."):
+            with st.spinner("💭 Generating analysis for Top 3 stocks..."):
                 suggestions = suggest_stocks_to_watch(ticker_list=selected, custom_prompt=prompt)
 
                     # Store results in session state
