@@ -1111,12 +1111,12 @@ with tab4:
                                         if ticker not in st.session_state.selected_stocks:
                                             st.session_state.selected_stocks.append(ticker)
                                             added_stocks.append(ticker)
-                else:
-                                        # Company name for search
-                                        search_needed.append(item)
+                                        else:
+                                            # Company name for search
+                                            search_needed.append(item)
                                 
-            # Show results
-                    if added_stocks:
+                                # Show results
+                                if added_stocks:
                         st.success(f"✅ Added tickers: {', '.join(added_stocks)}")
                                 
                     if search_needed:
