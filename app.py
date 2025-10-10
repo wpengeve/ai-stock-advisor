@@ -922,8 +922,8 @@ with tab3:
     st.header("📋 Compare Multiple Stocks Side by Side")
 
     trending = trending_stocks[:10]
-            current_market = st.session_state.get('selected_market', 'US')
-            ticker_choices = [f"{sym} - {get_stock_name(sym, current_market)}" for sym, name in trending]
+    current_market = st.session_state.get('selected_market', 'US')
+    ticker_choices = [f"{sym} - {get_stock_name(sym, current_market)}" for sym, name in trending]
 
     selected_tickers = st.multiselect(
         "Pick 2 or 3 stocks to compare:",
