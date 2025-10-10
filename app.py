@@ -966,7 +966,9 @@ with tab3:
 
         # Generate comparison summary
         if len(summaries) >= 2:
-            comparison_summary = compare_risks_between_stocks(summaries)
+            # Extract tickers from summaries (which are tuples of (ticker, summary, price_change))
+            tickers_only = [summary[0] for summary in summaries]
+            comparison_summary = compare_risks_between_stocks(tickers_only)
             st.markdown("### 📊 Comparison Summary")
             st.markdown(comparison_summary)
 
