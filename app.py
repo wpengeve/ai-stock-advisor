@@ -498,7 +498,7 @@ with tab1:
                                 advanced_ticker = selected_ticker
                             else:
                                 advanced_ticker = None
-                        else:
+            else:
                             # Multiple stocks comparison
                             advanced_ticker = None
                             
