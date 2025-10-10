@@ -499,10 +499,10 @@ with tab1:
                             else:
                                 advanced_ticker = None
             else:
-                            # Multiple stocks comparison
-                            advanced_ticker = None
-                            
-                        if len(st.session_state.advanced_selected_stocks) >= 2:
+                # Multiple stocks comparison
+                advanced_ticker = None
+                
+            if len(st.session_state.advanced_selected_stocks) >= 2:
                             st.markdown("#### 📊 Multiple Stocks Comparison")
                             
                             with st.spinner("Performing comprehensive comparison analysis..."):
