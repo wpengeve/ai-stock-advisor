@@ -657,8 +657,8 @@ with tab1:
                                         
                                 except Exception as e:
                                     st.error(f"❌ Error during comparison analysis: {str(e)}")
-                
-                else:
+            
+            else:
                             st.info("📊 **Multiple Stocks Comparison requires at least 2 stocks.** Please add more stocks to compare.")
                 
                 else:
