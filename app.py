@@ -843,8 +843,8 @@ with tab2:
         st.session_state.last_analysis_choice = None
     if 'analysis_results' not in st.session_state:
         st.session_state.analysis_results = None
-            
-            choice = st.radio(
+    
+    choice = st.radio(
                 "Select analysis type:",
                 ["🔝 Top 3 Only", "📊 All 10 Stocks"],
                 key="analysis_choice_radio"
