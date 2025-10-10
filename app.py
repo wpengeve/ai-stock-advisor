@@ -962,12 +962,12 @@ with tab3:
                             headlines
                         )
                         summaries.append((ticker, summary, price_change))
-                st.markdown(summary)
+                        st.markdown(summary)
 
-                # Generate comparison summary
-                if len(summaries) >= 2:
-                    comparison_summary = compare_risks_between_stocks(summaries)
-                    st.markdown("### 📊 Comparison Summary")
+        # Generate comparison summary
+        if len(summaries) >= 2:
+            comparison_summary = compare_risks_between_stocks(summaries)
+            st.markdown("### 📊 Comparison Summary")
                     st.markdown(comparison_summary)
 
         # Add GPT risk comparison section
