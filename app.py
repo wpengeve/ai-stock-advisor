@@ -908,10 +908,9 @@ with tab2:
                     
                     # Store results in session state
                     st.session_state.analysis_results = suggestions
-                
-            
-            # Display existing results if available
-            if st.session_state.analysis_results:
+    
+    # Display existing results if available
+    if st.session_state.analysis_results:
                 st.markdown("### 🧠 GPT Watchlist Suggestions")
                 st.markdown(st.session_state.analysis_results)
                 
