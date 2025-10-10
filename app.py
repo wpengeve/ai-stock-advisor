@@ -855,7 +855,7 @@ with tab2:
                 st.session_state.last_analysis_choice = choice
                 
                 if choice == "🔝 Top 3 Only":
-                selected = trending[:3]
+                    selected = trending[:3]
 
                     trending_formatted = "\n".join([f"- {ticker} ({get_stock_name(ticker, current_market)})" for ticker, name in selected])
                 prompt = f"""
