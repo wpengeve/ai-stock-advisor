@@ -317,9 +317,9 @@ with tab1:
     if selected_stocks:
         for selected_option in selected_stocks:
             ticker = selected_option.split(" - ")[0]
-                            current_market = st.session_state.get('selected_market', 'US')
-                                formatted_name = get_stock_name(ticker, current_market)
-                                st.markdown(f"### 📊 Summary for **{ticker} - {formatted_name}**")
+            current_market = st.session_state.get('selected_market', 'US')
+            formatted_name = get_stock_name(ticker, current_market)
+            st.markdown(f"### 📊 Summary for **{ticker} - {formatted_name}**")
 
             with st.spinner(f"Fetching data for {ticker}..."):
                 stock_info = get_cached_stock_summary(ticker)
