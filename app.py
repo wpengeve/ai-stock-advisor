@@ -848,11 +848,11 @@ with tab2:
                 "Select analysis type:",
                 ["🔝 Top 3 Only", "📊 All 10 Stocks"],
                 key="analysis_choice_radio"
-            )
-            
-            # Check if choice changed and process accordingly
-            if choice != st.session_state.last_analysis_choice:
-                st.session_state.last_analysis_choice = choice
+    )
+    
+    # Check if choice changed and process accordingly
+    if choice != st.session_state.last_analysis_choice:
+        st.session_state.last_analysis_choice = choice
                 
                 if choice == "🔝 Top 3 Only":
                 selected = trending[:3]
