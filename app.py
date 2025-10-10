@@ -880,7 +880,7 @@ with tab2:
                     # Direct GPT call for All 10
                     trending_formatted = "\n".join([f"- {ticker} ({get_stock_name(ticker, current_market)})" for ticker, name in selected])
                     prompt = f"""
-                You are a stock market investment assistant.
+You are a stock market investment assistant.
 
                 Here are the trending stocks:
                 {trending_formatted}
