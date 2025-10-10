@@ -215,7 +215,7 @@ def generate_portfolio_pdf(allocation_data, budget, tech_preference):
 
 
 def main():
-    st.set_page_config(page_title="AI Stock Advisor", page_icon="📈")
+st.set_page_config(page_title="AI Stock Advisor", page_icon="📈")
 
     # Initialize session state for market selection
     if 'selected_market' not in st.session_state:
@@ -264,14 +264,14 @@ with st.spinner("Loading trending stocks..."):
         
         tab1, tab2, tab3, tab4, tab5 = st.tabs(["📊 Stock Summary", "💡 Watchlist Suggestions", "📋 Compare Stocks", "💰 Portfolio Allocator", "🔬 Advanced Analysis"])
 
-with tab1:
-    st.header("📊 Get Market Summary for a Stock")
-    st.markdown("### 🔥 Trending Stocks Options")
+        with tab1:
+            st.header("📊 Get Market Summary for a Stock")
+            st.markdown("### 🔥 Trending Stocks Options")
 
-    n_trending = st.slider(
-        "🔢 How many trending stocks to fetch?",
-        min_value=5, max_value=30, value=10, step=1
-    )
+            n_trending = st.slider(
+                "🔢 How many trending stocks to fetch?",
+                min_value=5, max_value=30, value=10, step=1
+            )
 
     trending = trending_stocks[:n_trending]
     trending_with_change = []
@@ -1619,5 +1619,5 @@ with tab3:
 
 
 # Main app
-if __name__ == "__main__":
+    if __name__ == "__main__":
     main()
