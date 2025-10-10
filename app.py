@@ -876,20 +876,19 @@ with tab2:
                 
                 else:  # All 10 Stocks
                     selected = trending[:10]
-                    selected = trending[:10]
                     
                     # Direct GPT call for All 10
                     trending_formatted = "\n".join([f"- {ticker} ({get_stock_name(ticker, current_market)})" for ticker, name in selected])
+                    prompt = f"""
 You are a stock market investment assistant.
-                You are a stock market investment assistant.
 
-                Here are the trending stocks:
-                {trending_formatted}
+Here are the trending stocks:
+{trending_formatted}
 
-                For each stock above, briefly explain whether it's a good opportunity to watch or invest in now. 
-                Write 1–2 sentences for each. 
-                Respond in a clean readable bullet point format.
-                """
+For each stock above, briefly explain whether it's a good opportunity to watch or invest in now. 
+Write 1–2 sentences for each. 
+Respond in a clean readable bullet point format.
+"""
                     
                     with st.spinner("💭 Generating analysis for All 10 stocks..."):
                         try:
