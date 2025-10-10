@@ -947,12 +947,12 @@ with tab3:
                         headlines = get_all_headlines(ticker)
                         all_headlines.append((ticker, headlines))
 
-                hist = stock_info.get("history")
-                if hist is None or hist.empty:
-                    st.error(f"⚠️ No data for {ticker}")
-                    continue
+                        hist = stock_info.get("history")
+                        if hist is None or hist.empty:
+                            st.error(f"⚠️ No data for {ticker}")
+                            continue
 
-                price_change = ((hist["Close"].iloc[-1] - hist["Close"].iloc[0]) / hist["Close"].iloc[0]) * 100
+                        price_change = ((hist["Close"].iloc[-1] - hist["Close"].iloc[0]) / hist["Close"].iloc[0]) * 100
 
                 summary = generate_stock_summary(
                     ticker,
