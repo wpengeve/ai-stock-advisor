@@ -984,10 +984,10 @@ with tab3:
                     # - Use the data tables for your records
                     # """)
                     pass
-            else:
-                st.info("Please select at least 2 stocks to compare.")
-            
-            with tab4:
+        else:
+            st.info("Please select at least 2 stocks to compare.")
+
+with tab4:
                 st.header("💰 Portfolio Allocator")
                 st.markdown("Suggest how to allocate your budget across selected stocks with sector preferences.")
                 
