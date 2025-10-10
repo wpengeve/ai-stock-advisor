@@ -300,12 +300,12 @@ with tab1:
             st.error(f"❌ Unexpected error while fetching {sym}: {e}")
             trending_with_change.append((sym, name, 0.0))
 
-                    # Format tickers with market-specific names (Mandarin + English for Asian markets)
-                    current_market = st.session_state.get('selected_market', 'US')
-                    tickers_display = []
-                    for sym, name, change in trending_with_change:
-                        formatted_name = get_stock_name(sym, current_market)
-                        tickers_display.append(f"{sym} - {formatted_name} ({change:+.2f}%)")
+        # Format tickers with market-specific names (Mandarin + English for Asian markets)
+        current_market = st.session_state.get('selected_market', 'US')
+        tickers_display = []
+        for sym, name, change in trending_with_change:
+            formatted_name = get_stock_name(sym, current_market)
+            tickers_display.append(f"{sym} - {formatted_name} ({change:+.2f}%)")
 
     selected_stocks = st.multiselect("📈 Pick one or more trending stocks to summarize", options=tickers_display)
 
