@@ -422,9 +422,9 @@ with tab1:
     else:
         st.info("Select or surprise-pick a stock to see the summary.")
 
-                with tab5:
-            st.header("🔬 Advanced Analysis")
-                    st.markdown("### 📈 Technical & Fundamental Analysis")
+    with tab5:
+        st.header("🔬 Advanced Analysis")
+        st.markdown("### 📈 Technical & Fundamental Analysis")
                     
                     # Multiple stock selection for advanced analysis
                     st.markdown("#### 🎯 Smart Input")
