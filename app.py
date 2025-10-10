@@ -968,7 +968,7 @@ with tab3:
         if len(summaries) >= 2:
             comparison_summary = compare_risks_between_stocks(summaries)
             st.markdown("### 📊 Comparison Summary")
-                    st.markdown(comparison_summary)
+            st.markdown(comparison_summary)
 
         # Add GPT risk comparison section
         if len(tickers_only) >= 2:
