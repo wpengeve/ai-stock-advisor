@@ -485,8 +485,8 @@ with tab1:
                 index=0,  # Always default to first option (Single Stock Detailed)
                 key="advanced_analysis_option"
             )
-                        
-                        if analysis_option == "Single Stock Detailed":
+            
+            if analysis_option == "Single Stock Detailed":
                             # Single stock detailed analysis
                             selected_ticker = st.selectbox(
                                 "Select stock for detailed analysis:",
