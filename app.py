@@ -659,9 +659,9 @@ with tab1:
                                     st.error(f"❌ Error during comparison analysis: {str(e)}")
             
             else:
-                            st.info("📊 **Multiple Stocks Comparison requires at least 2 stocks.** Please add more stocks to compare.")
-                
-                else:
+                st.info("📊 **Multiple Stocks Comparison requires at least 2 stocks.** Please add more stocks to compare.")
+        
+        else:
                     advanced_ticker = None
                 
                 if advanced_ticker:
