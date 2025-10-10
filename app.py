@@ -912,13 +912,11 @@ Respond in a clean readable bullet point format.
             
     if st.session_state.analysis_results:
         st.markdown("### 🧠 GPT Watchlist Suggestions")
-                st.markdown("### 🧠 GPT Watchlist Suggestions")
-                st.markdown(st.session_state.analysis_results)
+        st.markdown(st.session_state.analysis_results)
         if st.session_state.last_analysis_choice == "🔝 Top 3 Only":
-                if st.session_state.last_analysis_choice == "🔝 Top 3 Only":
-                    st.info("📊 Analysis for Top 3 trending stocks")
-                else:
-                    st.info("📊 Analysis for All 10 trending stocks")
+            st.info("📊 Analysis for Top 3 trending stocks")
+        else:
+            st.info("📊 Analysis for All 10 trending stocks")
 
 with tab3:
     st.header("📋 Compare Multiple Stocks Side by Side")
