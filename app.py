@@ -385,42 +385,42 @@ with tab1:
                     elif eps_surprise_value < 0:
                         earnings_result = "Miss"
                         st.error(f"❌ EPS Surprise: {eps_surprise_value:+.2f}% (Miss)")
-                        else:
-                            earnings_result = "Neutral"
-                            st.info(f"ℹ️ EPS Surprise: {eps_surprise_value:+.2f}% (Neutral)")
                     else:
                         earnings_result = "Neutral"
+                        st.info(f"ℹ️ EPS Surprise: {eps_surprise_value:+.2f}% (Neutral)")
+                else:
+                    earnings_result = "Neutral"
 
-                    st.markdown(summary_text)
+                st.markdown(summary_text)
 
-                    with st.spinner("💭 Generating investment hypothesis..."):
-                        investment_hint = generate_investment_hypothesis(
-                            macro_mood=mood_label,
-                            earnings_result=earnings_result,
-                            price_trend_percent=price_change
-                        )
+                with st.spinner("💭 Generating investment hypothesis..."):
+                    investment_hint = generate_investment_hypothesis(
+                        macro_mood=mood_label,
+                        earnings_result=earnings_result,
+                        price_trend_percent=price_change
+                    )
 
-                    st.markdown("### 💡 Investment Hypothesis")
-                    st.info(investment_hint)
+                st.markdown("### 💡 Investment Hypothesis")
+                st.info(investment_hint)
 
-                    with st.spinner("🧠 Evaluating AI decision..."):
-                        decision, confidence, explanation = make_investment_decision(
-                            macro_mood=mood_label,
-                            earnings_result=earnings_result,
+                with st.spinner("🧠 Evaluating AI decision..."):
+                    decision, confidence, explanation = make_investment_decision(
+                        macro_mood=mood_label,
+                        earnings_result=earnings_result,
                             price_change=price_change,
                             ticker=ticker,
                             include_technical=True,
                             include_fundamental=True,
                             include_risk=True,
                             include_backtest=True
-                        )
+                    )
 
-                    st.markdown("### 🤖 AI Investment Decision")
-                    st.success(f"**Decision: {decision}**  &nbsp;&nbsp;&nbsp; 🔍 **Confidence: {confidence}%**")
-                    st.markdown(explanation)
+                st.markdown("### 🤖 AI Investment Decision")
+                st.success(f"**Decision: {decision}**  &nbsp;&nbsp;&nbsp; 🔍 **Confidence: {confidence}%**")
+                st.markdown(explanation)
 
-            else:
-                st.info("Select or surprise-pick a stock to see the summary.")
+    else:
+        st.info("Select or surprise-pick a stock to see the summary.")
 
     with tab5:
         st.header("🔬 Advanced Analysis")
