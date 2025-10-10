@@ -871,8 +871,8 @@ with tab2:
             with st.spinner("💭 Generating analysis for Top 3 stocks..."):
                 suggestions = suggest_stocks_to_watch(ticker_list=selected, custom_prompt=prompt)
 
-                    # Store results in session state
-                    st.session_state.analysis_results = suggestions
+                # Store results in session state
+                st.session_state.analysis_results = suggestions
                 
             
                 else:  # All 10 Stocks
