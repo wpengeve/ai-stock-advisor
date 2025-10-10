@@ -376,7 +376,7 @@ with tab1:
                 st.markdown(f"**Price:** ${stock_info['price']} &nbsp;&nbsp;&nbsp; **5-Day Change:** {price_change:.2f}%")
 
                 earnings_data = fetch_earnings_for_stock(ticker)
-                                eps_surprise_value = earnings_data.get("eps_surprise", None) if earnings_data else None
+                eps_surprise_value = earnings_data.get("eps_surprise", None) if earnings_data else None
 
                 if isinstance(eps_surprise_value, (int, float)):
                     if eps_surprise_value > 0:
