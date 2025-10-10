@@ -344,11 +344,11 @@ with tab1:
                 price_change = ((hist["Close"].iloc[-1] - hist["Close"].iloc[0]) / hist["Close"].iloc[0]) * 100
 
                 # Price Chart
-                                st.markdown(f"### 📉 5-Day Price Trend for {ticker} - {formatted_name}")
+                st.markdown(f"### 📉 5-Day Price Trend for {ticker} - {formatted_name}")
                 fig = go.Figure()
-                                fig.add_trace(go.Scatter(x=hist.index, y=hist["Close"], mode='lines+markers', name=f"{ticker} - {formatted_name}"))
+                fig.add_trace(go.Scatter(x=hist.index, y=hist["Close"], mode='lines+markers', name=f"{ticker} - {formatted_name}"))
                 fig.update_layout(
-                                    title=f"{ticker} - {formatted_name} 5-Day Price Trend",
+                    title=f"{ticker} - {formatted_name} 5-Day Price Trend",
                     xaxis_title="Date", yaxis_title="Price ($)",
                     hovermode="x unified", xaxis_tickangle=-45
                 )
