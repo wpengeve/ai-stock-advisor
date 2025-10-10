@@ -472,10 +472,10 @@ with tab1:
                                     st.session_state.advanced_selected_stocks = list(set(st.session_state.advanced_selected_stocks + found_tickers))
                                     st.success(f"✅ Added {len(found_tickers)} stocks: {', '.join(found_tickers)}")
                                     st.rerun()
-                    
-                    # Display selected stocks
-                    if st.session_state.advanced_selected_stocks:
-                        st.markdown("#### 📊 Selected Stocks for Analysis")
+        
+        # Display selected stocks
+        if st.session_state.advanced_selected_stocks:
+            st.markdown("#### 📊 Selected Stocks for Analysis")
                         st.write(f"**Stocks to analyze:** {', '.join(st.session_state.advanced_selected_stocks)}")
                         
                         # Analysis options - default to Single Stock Detailed
