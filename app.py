@@ -829,12 +829,12 @@ with tab2:
     current_market = st.session_state.get('selected_market', 'US')
     formatted_trending = []
     for sym, name in trending:
-                formatted_name = get_stock_name(sym, current_market)
-                formatted_trending.append((sym, formatted_name))
-            
-            df = pd.DataFrame(formatted_trending, columns=["Ticker", "Company"])
-            st.markdown("### 🔥 Currently Trending Tickers")
-            st.dataframe(df, hide_index=True)
+        formatted_name = get_stock_name(sym, current_market)
+        formatted_trending.append((sym, formatted_name))
+    
+    df = pd.DataFrame(formatted_trending, columns=["Ticker", "Company"])
+    st.markdown("### 🔥 Currently Trending Tickers")
+    st.dataframe(df, hide_index=True)
 
             # 3. Use session state to prevent jumping completely
             st.markdown("**📈 Choose your analysis option:**")
