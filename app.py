@@ -875,7 +875,7 @@ with tab2:
                     st.session_state.analysis_results = suggestions
                 
             else:  # All 10 Stocks
-                    selected = trending[:10]
+                selected = trending[:10]
                     
                     # Direct GPT call for All 10
                     trending_formatted = "\n".join([f"- {ticker} ({get_stock_name(ticker, current_market)})" for ticker, name in selected])
