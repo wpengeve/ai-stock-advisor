@@ -825,10 +825,10 @@ with tab2:
     # 1. Fetch 10 trending stocks
     trending = trending_stocks[:10]
 
-            # 2. Display all 10 trending stocks with formatted names
-            current_market = st.session_state.get('selected_market', 'US')
-            formatted_trending = []
-            for sym, name in trending:
+    # 2. Display all 10 trending stocks with formatted names
+    current_market = st.session_state.get('selected_market', 'US')
+    formatted_trending = []
+    for sym, name in trending:
                 formatted_name = get_stock_name(sym, current_market)
                 formatted_trending.append((sym, formatted_name))
             
