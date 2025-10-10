@@ -216,6 +216,7 @@ def generate_portfolio_pdf(allocation_data, budget, tech_preference):
 
 def main():
     st.set_page_config(page_title="AI Stock Advisor", page_icon="📈")
+
     # Initialize session state for market selection
     if 'selected_market' not in st.session_state:
         st.session_state.selected_market = 'US'
@@ -225,7 +226,7 @@ with st.spinner("Loading trending stocks..."):
             # Get trending stocks based on selected market
             current_market = st.session_state.get('selected_market', 'US')
             if current_market == 'US':
-    trending_stocks = get_trending_stocks(limit=30)
+                trending_stocks = get_trending_stocks(limit=30)
             else:
                 # For non-US markets, use popular stocks from market config with proper names
                 market_config = get_market_config(current_market)
@@ -843,21 +844,21 @@ with tab2:
         st.session_state.last_analysis_choice = None
     if 'analysis_results' not in st.session_state:
         st.session_state.analysis_results = None
-    
+            
             choice = st.radio(
                 "Select analysis type:",
                 ["🔝 Top 3 Only", "📊 All 10 Stocks"],
                 key="analysis_choice_radio"
-    )
-    
-    # Check if choice changed and process accordingly
-    if choice != st.session_state.last_analysis_choice:
-        st.session_state.last_analysis_choice = choice
-        
-        if choice == "🔝 Top 3 Only":
+            )
+            
+            # Check if choice changed and process accordingly
+            if choice != st.session_state.last_analysis_choice:
+                st.session_state.last_analysis_choice = choice
+                
+                if choice == "🔝 Top 3 Only":
                 selected = trending[:3]
 
-            trending_formatted = "\n".join([f"- {ticker} ({get_stock_name(ticker, current_market)})" for ticker, name in selected])
+                    trending_formatted = "\n".join([f"- {ticker} ({get_stock_name(ticker, current_market)})" for ticker, name in selected])
                 prompt = f"""
             You are a stock market investment assistant.
 
@@ -868,13 +869,14 @@ with tab2:
             Write 1–2 sentences for each. 
             Respond in a clean readable bullet point format.
             """
-            with st.spinner("💭 Generating analysis for Top 3 stocks..."):
+                    with st.spinner("💭 Generating analysis for Top 3 stocks..."):
                 suggestions = suggest_stocks_to_watch(ticker_list=selected, custom_prompt=prompt)
 
-                # Store results in session state
-                st.session_state.analysis_results = suggestions
-        
-        else:  # All 10 Stocks
+                    # Store results in session state
+                    st.session_state.analysis_results = suggestions
+                
+            
+                else:  # All 10 Stocks
                     selected = trending[:10]
                     
                     # Direct GPT call for All 10
@@ -908,9 +910,10 @@ with tab2:
                     
                     # Store results in session state
                     st.session_state.analysis_results = suggestions
-    
-    # Display existing results if available
-    if st.session_state.analysis_results:
+                
+            
+            # Display existing results if available
+            if st.session_state.analysis_results:
                 st.markdown("### 🧠 GPT Watchlist Suggestions")
                 st.markdown(st.session_state.analysis_results)
                 
@@ -923,8 +926,8 @@ with tab3:
     st.header("📋 Compare Multiple Stocks Side by Side")
 
     trending = trending_stocks[:10]
-    current_market = st.session_state.get('selected_market', 'US')
-    ticker_choices = [f"{sym} - {get_stock_name(sym, current_market)}" for sym, name in trending]
+            current_market = st.session_state.get('selected_market', 'US')
+            ticker_choices = [f"{sym} - {get_stock_name(sym, current_market)}" for sym, name in trending]
 
     selected_tickers = st.multiselect(
         "Pick 2 or 3 stocks to compare:",
@@ -944,8 +947,8 @@ with tab3:
             with cols[idx]:
                         current_market = st.session_state.get('selected_market', 'US')
                         st.subheader(f"📈 {ticker} - {get_stock_name(ticker, current_market)}")
-        if st.session_state.last_analysis_choice == "🔝 Top 3 Only":
-            st.info("📊 Analysis for Top 3 trending stocks")
+                stock_info = get_cached_stock_summary(ticker)
+                headlines = get_all_headlines(ticker)
                 all_headlines.append((ticker, headlines))
 
                 hist = stock_info.get("history")
@@ -962,7 +965,7 @@ with tab3:
                     price_change,
                     headlines
                 )
-        else:
+                        summaries.append((ticker, summary, price_change))
                 st.markdown(summary)
 
                 # Generate comparison summary
@@ -985,10 +988,10 @@ with tab3:
                     # - Use the data tables for your records
                     # """)
                     pass
-            st.info("📊 Analysis for All 10 trending stocks")
+            else:
                 st.info("Please select at least 2 stocks to compare.")
             
-        else:
+            with tab4:
                 st.header("💰 Portfolio Allocator")
                 st.markdown("Suggest how to allocate your budget across selected stocks with sector preferences.")
                 
@@ -998,7 +1001,7 @@ with tab3:
         budget = st.number_input(f"Enter your total budget ({currency_symbol})", min_value=100.0, value=1000.0, step=10.0)
                 
                 # Tech preference slider
-            st.error("⚠️ GPT returned an empty response.")
+                tech_preference = st.slider(
                     "🎯 Tech Stock Preference", 
                     min_value=0.0, 
                     max_value=1.0, 
@@ -1025,7 +1028,7 @@ with tab3:
                     selected_display = st.multiselect("Select stocks to allocate", trending_display)
                     selected_symbols = [s.split(" - ")[0] for s in selected_display]
                 
-                st.error("❌ Failed to fetch current prices. Please check your stock symbols.")
+                    else:
                     # Manual stock entry
                     st.markdown("#### ✏️ Enter Your Stock List")
                     
@@ -1111,15 +1114,15 @@ with tab3:
                                         if ticker not in st.session_state.selected_stocks:
                                             st.session_state.selected_stocks.append(ticker)
                                             added_stocks.append(ticker)
-                    else:
+                else:
                                         # Company name for search
                                         search_needed.append(item)
                                 
             # Show results
-                formatted_price = format_currency(price, current_market)
+                    if added_stocks:
                         st.success(f"✅ Added tickers: {', '.join(added_stocks)}")
                                 
-                price_data.append({"Ticker": f"{ticker} - {formatted_name}", "Current Price": formatted_price})
+                    if search_needed:
                         st.info(f"🔍 Need to search for: {', '.join(search_needed)}")
                                     
                         # Search for company names and store results in session state
@@ -1128,7 +1131,7 @@ with tab3:
                             st.session_state.search_results[company_name] = search_results
                     
                     # Display search results outside the form (so buttons work)
-                formatted_name = get_stock_name(ticker, current_market)
+                    if st.session_state.search_results:
                         st.markdown("**🔍 Search Results - Select Multiple Stocks:**")
                         
                         # Collect all search results into one list (optimized)
@@ -1136,7 +1139,7 @@ with tab3:
                         for company_name, search_results in st.session_state.search_results.items():
                             if search_results:
                                 all_search_results.extend(search_results)
-                else:
+                            else:
                                 st.warning(f"❌ No results found for '{company_name}'")
                         
                         # Remove duplicates and create options for multi-select (optimized)
@@ -1209,9 +1212,9 @@ with tab3:
                                     st.rerun()
                     
                     # Use selected stocks from session state
-                formatted_name = get_stock_name(ticker, current_market)
+                    selected_symbols = st.session_state.selected_stocks.copy()
                     
-                insight_data.append({
+                    with input_tab2:
                         st.markdown("**Quick select from popular stocks:**")
                         
                         # Get market-specific popular stocks
@@ -1616,5 +1619,5 @@ with tab3:
 
 
 # Main app
+            if __name__ == "__main__":
     main()
-    # End of main function
