@@ -954,13 +954,13 @@ with tab3:
 
                         price_change = ((hist["Close"].iloc[-1] - hist["Close"].iloc[0]) / hist["Close"].iloc[0]) * 100
 
-                summary = generate_stock_summary(
-                    ticker,
-                    stock_info["name"],
-                    stock_info["price"],
-                    price_change,
-                    headlines
-                )
+                        summary = generate_stock_summary(
+                            ticker,
+                            stock_info["name"],
+                            stock_info["price"],
+                            price_change,
+                            headlines
+                        )
                         summaries.append((ticker, summary, price_change))
                 st.markdown(summary)
 
