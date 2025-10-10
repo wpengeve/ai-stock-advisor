@@ -429,10 +429,10 @@ with tab1:
         # Multiple stock selection for advanced analysis
         st.markdown("#### 🎯 Smart Input")
         st.markdown("**Enter multiple stocks:** Type tickers directly (AAPL, MSFT) or company names (Apple, Target) - separate with commas")
-                    
-                    # Initialize session state for advanced analysis
-                    if 'advanced_selected_stocks' not in st.session_state:
-                        st.session_state.advanced_selected_stocks = []
+        
+        # Initialize session state for advanced analysis
+        if 'advanced_selected_stocks' not in st.session_state:
+            st.session_state.advanced_selected_stocks = []
                     
                     # Smart input for multiple stocks using form
                     with st.form("advanced_stock_input", clear_on_submit=True):
