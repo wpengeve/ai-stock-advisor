@@ -225,7 +225,7 @@ with st.spinner("Loading trending stocks..."):
             # Get trending stocks based on selected market
             current_market = st.session_state.get('selected_market', 'US')
             if current_market == 'US':
-    trending_stocks = get_trending_stocks(limit=30)
+                trending_stocks = get_trending_stocks(limit=30)
             else:
                 # For non-US markets, use popular stocks from market config with proper names
                 market_config = get_market_config(current_market)
