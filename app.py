@@ -822,7 +822,7 @@ with tab2:
 
     # Always show the trending stocks and analysis options
             # 1. Fetch 10 trending stocks
-            trending = trending_stocks[:10]
+    trending = trending_stocks[:10]
 
     # 2. Display all 10 trending stocks with formatted names
     current_market = st.session_state.get('selected_market', 'US')
@@ -832,8 +832,8 @@ with tab2:
         formatted_trending.append((sym, formatted_name))
     
     df = pd.DataFrame(formatted_trending, columns=["Ticker", "Company"])
-            st.markdown("### 🔥 Currently Trending Tickers")
-            st.dataframe(df, hide_index=True)
+    st.markdown("### 🔥 Currently Trending Tickers")
+    st.dataframe(df, hide_index=True)
 
     # 3. Use session state to prevent jumping completely
     st.markdown("**📈 Choose your analysis option:**")
