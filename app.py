@@ -1120,9 +1120,9 @@ with tab4:
                                     st.success(f"✅ Added tickers: {', '.join(added_stocks)}")
                                 
                                 if search_needed:
-                        st.info(f"🔍 Need to search for: {', '.join(search_needed)}")
+                                    st.info(f"🔍 Need to search for: {', '.join(search_needed)}")
                                     
-                        # Search for company names and store results in session state
+                                    # Search for company names and store results in session state
                         for company_name in search_needed:
                             search_results = cached_search_companies(company_name, 3)
                             st.session_state.search_results[company_name] = search_results
