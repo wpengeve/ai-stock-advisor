@@ -943,7 +943,7 @@ with tab3:
             with cols[idx]:
                         current_market = st.session_state.get('selected_market', 'US')
                         st.subheader(f"📈 {ticker} - {get_stock_name(ticker, current_market)}")
-                stock_info = get_cached_stock_summary(ticker)
+                        stock_info = get_cached_stock_summary(ticker)
                 headlines = get_all_headlines(ticker)
                 all_headlines.append((ticker, headlines))
 
