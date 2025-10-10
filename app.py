@@ -1117,9 +1117,9 @@ with tab4:
                                 
                                 # Show results
                                 if added_stocks:
-                        st.success(f"✅ Added tickers: {', '.join(added_stocks)}")
+                                    st.success(f"✅ Added tickers: {', '.join(added_stocks)}")
                                 
-                    if search_needed:
+                                if search_needed:
                         st.info(f"🔍 Need to search for: {', '.join(search_needed)}")
                                     
                         # Search for company names and store results in session state
