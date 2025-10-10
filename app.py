@@ -477,14 +477,14 @@ with tab1:
         if st.session_state.advanced_selected_stocks:
             st.markdown("#### 📊 Selected Stocks for Analysis")
             st.write(f"**Stocks to analyze:** {', '.join(st.session_state.advanced_selected_stocks)}")
-                        
-                        # Analysis options - default to Single Stock Detailed
-                        analysis_option = st.radio(
-                            "Choose analysis type:",
-                            ["Single Stock Detailed", "Multiple Stocks Comparison"],
-                            index=0,  # Always default to first option (Single Stock Detailed)
-                            key="advanced_analysis_option"
-                        )
+            
+            # Analysis options - default to Single Stock Detailed
+            analysis_option = st.radio(
+                "Choose analysis type:",
+                ["Single Stock Detailed", "Multiple Stocks Comparison"],
+                index=0,  # Always default to first option (Single Stock Detailed)
+                key="advanced_analysis_option"
+            )
                         
                         if analysis_option == "Single Stock Detailed":
                             # Single stock detailed analysis
