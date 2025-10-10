@@ -1025,7 +1025,7 @@ with tab4:
                     selected_display = st.multiselect("Select stocks to allocate", trending_display)
                     selected_symbols = [s.split(" - ")[0] for s in selected_display]
                 
-                    else:
+                else:
                     # Manual stock entry
                     st.markdown("#### ✏️ Enter Your Stock List")
                     
