@@ -994,7 +994,8 @@ with tab4:
                 current_market = st.session_state.get('selected_market', 'US')
                 market_config = get_market_config(current_market)
                 currency_symbol = market_config.get('currency_symbol', '$')
-        budget = st.number_input(f"Enter your total budget ({currency_symbol})", min_value=100.0, value=1000.0, step=10.0)
+                
+                budget = st.number_input(f"Enter your total budget ({currency_symbol})", min_value=100.0, value=1000.0, step=10.0)
                 
                 # Tech preference slider
                 tech_preference = st.slider(
