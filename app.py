@@ -433,9 +433,9 @@ with tab1:
         # Initialize session state for advanced analysis
         if 'advanced_selected_stocks' not in st.session_state:
             st.session_state.advanced_selected_stocks = []
-                    
-                    # Smart input for multiple stocks using form
-                    with st.form("advanced_stock_input", clear_on_submit=True):
+        
+        # Smart input for multiple stocks using form
+        with st.form("advanced_stock_input", clear_on_submit=True):
                         user_input = st.text_input(
                             "Add stocks", 
                             placeholder="AAPL, Target, Amazon, MSFT, TSLA",
