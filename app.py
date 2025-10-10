@@ -873,9 +873,8 @@ with tab2:
 
                 # Store results in session state
                 st.session_state.analysis_results = suggestions
-                
-            
-                else:  # All 10 Stocks
+        
+        else:  # All 10 Stocks
                     selected = trending[:10]
                     
                     # Direct GPT call for All 10
