@@ -869,7 +869,7 @@ with tab2:
             Respond in a clean readable bullet point format.
             """
                     with st.spinner("💭 Generating analysis for Top 3 stocks..."):
-                suggestions = suggest_stocks_to_watch(ticker_list=selected, custom_prompt=prompt)
+                        suggestions = suggest_stocks_to_watch(ticker_list=selected, custom_prompt=prompt)
 
                     # Store results in session state
                     st.session_state.analysis_results = suggestions
