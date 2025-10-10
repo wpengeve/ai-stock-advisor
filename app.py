@@ -225,7 +225,7 @@ with st.spinner("Loading trending stocks..."):
             # Get trending stocks based on selected market
             current_market = st.session_state.get('selected_market', 'US')
             if current_market == 'US':
-                trending_stocks = get_trending_stocks(limit=30)
+    trending_stocks = get_trending_stocks(limit=30)
             else:
                 # For non-US markets, use popular stocks from market config with proper names
                 market_config = get_market_config(current_market)
@@ -821,8 +821,8 @@ with tab2:
     st.header("💡 Get Investment Suggestions")
 
     # Always show the trending stocks and analysis options
-    # 1. Fetch 10 trending stocks
-    trending = trending_stocks[:10]
+            # 1. Fetch 10 trending stocks
+            trending = trending_stocks[:10]
 
     # 2. Display all 10 trending stocks with formatted names
     current_market = st.session_state.get('selected_market', 'US')
@@ -832,8 +832,8 @@ with tab2:
         formatted_trending.append((sym, formatted_name))
     
     df = pd.DataFrame(formatted_trending, columns=["Ticker", "Company"])
-    st.markdown("### 🔥 Currently Trending Tickers")
-    st.dataframe(df, hide_index=True)
+            st.markdown("### 🔥 Currently Trending Tickers")
+            st.dataframe(df, hide_index=True)
 
     # 3. Use session state to prevent jumping completely
     st.markdown("**📈 Choose your analysis option:**")
@@ -844,7 +844,7 @@ with tab2:
     if 'analysis_results' not in st.session_state:
         st.session_state.analysis_results = None
     
-    choice = st.radio(
+            choice = st.radio(
                 "Select analysis type:",
                 ["🔝 Top 3 Only", "📊 All 10 Stocks"],
                 key="analysis_choice_radio"
@@ -855,10 +855,10 @@ with tab2:
                 st.session_state.last_analysis_choice = choice
                 
                 if choice == "🔝 Top 3 Only":
-                    selected = trending[:3]
+                selected = trending[:3]
 
                     trending_formatted = "\n".join([f"- {ticker} ({get_stock_name(ticker, current_market)})" for ticker, name in selected])
-                    prompt = f"""
+                prompt = f"""
             You are a stock market investment assistant.
 
             Here are the trending stocks:
@@ -869,7 +869,7 @@ with tab2:
             Respond in a clean readable bullet point format.
             """
                     with st.spinner("💭 Generating analysis for Top 3 stocks..."):
-                        suggestions = suggest_stocks_to_watch(ticker_list=selected, custom_prompt=prompt)
+                suggestions = suggest_stocks_to_watch(ticker_list=selected, custom_prompt=prompt)
 
                     # Store results in session state
                     st.session_state.analysis_results = suggestions
@@ -910,8 +910,8 @@ You are a stock market investment assistant.
                     st.session_state.analysis_results = suggestions
                 
             
-            # Display existing results if available
-            if st.session_state.analysis_results:
+    # Display existing results if available
+    if st.session_state.analysis_results:
                 st.markdown("### 🧠 GPT Watchlist Suggestions")
                 st.markdown(st.session_state.analysis_results)
                 
