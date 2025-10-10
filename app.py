@@ -821,8 +821,8 @@ with tab2:
     st.header("💡 Get Investment Suggestions")
 
     # Always show the trending stocks and analysis options
-            # 1. Fetch 10 trending stocks
-            trending = trending_stocks[:10]
+    # 1. Fetch 10 trending stocks
+    trending = trending_stocks[:10]
 
     # 2. Display all 10 trending stocks with formatted names
     current_market = st.session_state.get('selected_market', 'US')
