@@ -858,7 +858,7 @@ with tab2:
                     selected = trending[:3]
 
                     trending_formatted = "\n".join([f"- {ticker} ({get_stock_name(ticker, current_market)})" for ticker, name in selected])
-                prompt = f"""
+                    prompt = f"""
             You are a stock market investment assistant.
 
             Here are the trending stocks:
