@@ -223,50 +223,50 @@ st.set_page_config(page_title="AI Stock Advisor", page_icon="📈")
 
 # ✅ Add spinner while fetching trending stocks
 with st.spinner("Loading trending stocks..."):
-    # Get trending stocks based on selected market
-    current_market = st.session_state.get('selected_market', 'US')
-    if current_market == 'US':
-    trending_stocks = get_trending_stocks(limit=30)
-    else:
-        # For non-US markets, use popular stocks from market config with proper names
-        market_config = get_market_config(current_market)
-        popular_stocks = get_market_popular_stocks(current_market)
-        trending_stocks = [(ticker, get_stock_name(ticker, current_market)) for ticker in popular_stocks[:10]]
-
-    # Header section above tab navigation
-    st.title("🤖 AI Stock Advisor")
-    st.markdown("Your LLM-powered assistant for investment research")
-    st.success("🚀 **AI Stock Advisor is ready!** Enhanced with technical analysis, fundamental analysis, risk management, and backtesting capabilities.")
-    
-    # Market selector right below the header
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        # Get current market with fallback to US
+        # Get trending stocks based on selected market
         current_market = st.session_state.get('selected_market', 'US')
-        selected_market = st.selectbox(
-            "🌍 Select Market:",
-            options=list(MARKET_CONFIGS.keys()),
-            format_func=lambda x: MARKET_CONFIGS[x]['name'],
-            index=list(MARKET_CONFIGS.keys()).index(current_market),
-            key="market_selector"
-        )
+        if current_market == 'US':
+            trending_stocks = get_trending_stocks(limit=30)
+        else:
+            # For non-US markets, use popular stocks from market config with proper names
+            market_config = get_market_config(current_market)
+            popular_stocks = get_market_popular_stocks(current_market)
+            trending_stocks = [(ticker, get_stock_name(ticker, current_market)) for ticker in popular_stocks[:10]]
+
+        # Header section above tab navigation
+        st.title("🤖 AI Stock Advisor")
+        st.markdown("Your LLM-powered assistant for investment research")
+        st.success("🚀 **AI Stock Advisor is ready!** Enhanced with technical analysis, fundamental analysis, risk management, and backtesting capabilities.")
         
-        # Update session state when market changes
-        if selected_market != current_market:
-            st.session_state.selected_market = selected_market
-            st.rerun()
+        # Market selector right below the header
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            # Get current market with fallback to US
+            current_market = st.session_state.get('selected_market', 'US')
+            selected_market = st.selectbox(
+                "🌍 Select Market:",
+                options=list(MARKET_CONFIGS.keys()),
+                format_func=lambda x: MARKET_CONFIGS[x]['name'],
+                index=list(MARKET_CONFIGS.keys()).index(current_market),
+                key="market_selector"
+            )
+            
+            # Update session state when market changes
+            if selected_market != current_market:
+                st.session_state.selected_market = selected_market
+                st.rerun()
 
-    # Get current market configuration
-    market_config = get_market_config(current_market)
-    
-    # Display market info
-    st.info(f"📊 **Current Market:** {market_config['name']} | 💰 **Currency:** {market_config['currency']} | ⏰ **Trading Hours:** {market_config['trading_hours']}")
-    
-    tab1, tab2, tab3, tab4, tab5 = st.tabs(["📊 Stock Summary", "💡 Watchlist Suggestions", "📋 Compare Stocks", "💰 Portfolio Allocator", "🔬 Advanced Analysis"])
+        # Get current market configuration
+        market_config = get_market_config(current_market)
+        
+        # Display market info
+        st.info(f"📊 **Current Market:** {market_config['name']} | 💰 **Currency:** {market_config['currency']} | ⏰ **Trading Hours:** {market_config['trading_hours']}")
+        
+        tab1, tab2, tab3, tab4, tab5 = st.tabs(["📊 Stock Summary", "💡 Watchlist Suggestions", "📋 Compare Stocks", "💰 Portfolio Allocator", "🔬 Advanced Analysis"])
 
-with tab1:
-    st.header("📊 Get Market Summary for a Stock")
-    st.markdown("### 🔥 Trending Stocks Options")
+    with tab1:
+        st.header("📊 Get Market Summary for a Stock")
+        st.markdown("### 🔥 Trending Stocks Options")
 
     n_trending = st.slider(
         "🔢 How many trending stocks to fetch?",
@@ -1028,7 +1028,7 @@ with tab3:
             selected_display = st.multiselect("Select stocks to allocate", trending_display)
             selected_symbols = [s.split(" - ")[0] for s in selected_display]
         
-        else:
+                    else:
             # Manual stock entry
             st.markdown("#### ✏️ Enter Your Stock List")
             
