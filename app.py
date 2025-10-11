@@ -1646,6 +1646,6 @@ with tab4:
                         st.info("ℹ️ Please enter a budget greater than $0.")
 
 
-# Main app
+# Main app - Updated to fix optimization section caching
 if __name__ == "__main__":
     main()
