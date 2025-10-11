@@ -1531,7 +1531,8 @@ with tab4:
                                         st.info(f"💡 **Consider increasing budget to {format_currency(suggested_budget, current_market)}** for better diversification")
                                     
                                     # Smart stock suggestions for better budget utilization
-                                    st.markdown("### 🎯 SMART STOCK SELECTION GUIDE - UPDATED!")
+                                    st.markdown("### 🎯 SMART STOCK SELECTION GUIDE - MARKET SPECIFIC!")
+                                    st.info(f"🔍 Current market: {current_market} - This should show Taiwan stocks when Taiwan is selected!")
                                     
                                     # Calculate average price of selected stocks
                                     avg_price = sum(prices.get(ticker, 0) for ticker in selected_symbols) / len(selected_symbols)
