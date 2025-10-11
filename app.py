@@ -1552,14 +1552,24 @@ with tab4:
                                         st.markdown("**💡 Better stock selection strategies:**")
                                         
                                         # Create a simple list format
-                                        st.markdown("""
+                                        # Get market-specific examples
+                                        market_config = get_market_config(current_market)
+                                        currency_symbol = market_config.get('currency_symbol', '$')
+                                        popular_stocks = get_market_popular_stocks(current_market)[:6]
+                                        
+                                        # Create market-specific examples
+                                        high_price_examples = ", ".join(popular_stocks[:2])
+                                        mid_price_examples = ", ".join(popular_stocks[2:4])
+                                        low_price_examples = ", ".join(popular_stocks[4:6])
+                                        
+                                        st.markdown(f"""
                                         **🎯 Mix Price Ranges:**
-                                        - **High-priced**: AAPL, MSFT, GOOGL ($100-300)
-                                        - **Mid-priced**: JNJ, PG, KO ($50-150) 
-                                        - **Low-priced**: PLUG, INTC ($20-50)
+                                        - **High-priced**: {high_price_examples} ({currency_symbol}100-300)
+                                        - **Mid-priced**: {mid_price_examples} ({currency_symbol}50-150) 
+                                        - **Low-priced**: {low_price_examples} ({currency_symbol}20-50)
                                         
                                         **📈 Smart Alternatives:**
-                                        - **ETFs**: SPY, QQQ (broad market exposure)
+                                        - **ETFs**: Broad market exposure for diversification
                                         - **Dividend stocks**: Often lower-priced, good for small budgets
                                         - **Fractional shares**: For expensive stocks you really want
                                         """)
@@ -1569,26 +1579,35 @@ with tab4:
                                     col1, col2, col3 = st.columns(3)
                                     
                                     with col1:
-                                        st.markdown("""
+                                        # Large Cap examples from current market
+                                        large_cap_examples = ", ".join(popular_stocks[:4])
+                                        st.markdown(f"""
                                         **🏢 Large Cap (Stable)**
-                                        - JNJ, PG, KO, WMT
-                                        - Price: $50-150
+                                        - {large_cap_examples}
+                                        - Price: {currency_symbol}50-150
                                         - Good for 20-30% allocation
                                         """)
                                     
                                     with col2:
-                                        st.markdown("""
+                                        # Tech Growth examples from current market
+                                        tech_examples = ", ".join(popular_stocks[4:7]) if len(popular_stocks) >= 7 else ", ".join(popular_stocks[4:])
+                                        st.markdown(f"""
                                         **💻 Tech Growth**
-                                        - AAPL, MSFT, GOOGL
-                                        - Price: $100-300
+                                        - {tech_examples}
+                                        - Price: {currency_symbol}100-300
                                         - Good for 30-40% allocation
                                         """)
                                     
                                     with col3:
-                                        st.markdown("""
+                                        # Market-specific alternatives
+                                        if current_market == 'US':
+                                            etf_examples = "SPY, QQQ, VTI"
+                                        else:
+                                            etf_examples = "Market ETFs"
+                                        st.markdown(f"""
                                         **📈 ETFs (Diversified)**
-                                        - SPY, QQQ, VTI
-                                        - Price: $300-500
+                                        - {etf_examples}
+                                        - Price: {currency_symbol}300-500
                                         - Good for 20-30% allocation
                                         """)
                                 
