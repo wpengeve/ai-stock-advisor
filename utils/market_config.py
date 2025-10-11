@@ -183,6 +183,7 @@ MARKET_COMPANY_MAPPINGS = {
         'PLAID': 'PLAID'
     },
     "TW": {
+        # English names
         'TSMC': '2330.TW',
         'HON HAI': '2317.TW',
         'MEDIATEK': '2454.TW',
@@ -197,7 +198,25 @@ MARKET_COMPANY_MAPPINGS = {
         'LITEON': '2301.TW',
         'UNIMICRON': '3037.TW',
         'INVENTEC': '2356.TW',
-        'COMPAL': '2324.TW'
+        'COMPAL': '2324.TW',
+        # Chinese names
+        '台積電': '2330.TW',
+        '鴻海': '2317.TW',
+        '聯發科': '2454.TW',
+        '廣達': '2382.TW',
+        '台塑': '6505.TW',
+        '富邦金': '2881.TW',
+        '國泰金': '2882.TW',
+        '中信金': '2891.TW',
+        '華碩': '2357.TW',
+        '宏碁': '2353.TW',
+        '台達電': '2308.TW',
+        '光寶科': '2301.TW',
+        '欣興': '3037.TW',
+        '英業達': '2356.TW',
+        '仁寶': '2324.TW',
+        '亞泥': '1102.TW',
+        '中鋼': '2002.TW'
     }
     # Commented out other market mappings for now
     # "HK": {
