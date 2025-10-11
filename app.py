@@ -1122,11 +1122,23 @@ with tab4:
                                 for item in items:
                                     item_upper = item.upper().strip()
                                     
-                                    # First check if it's a valid ticker (optimized validation)
-                                    if (len(item_upper) <= 5 and 
+                                    # Check if it's a valid ticker for current market
+                                    current_market = st.session_state.get('selected_market', 'US')
+                                    market_popular_stocks = get_market_popular_stocks(current_market)
+                                    
+                                    # For US market: check if it's a valid US ticker
+                                    if (current_market == 'US' and 
+                                        len(item_upper) <= 5 and 
                                         item_upper.isalpha() and 
                                         item_upper in popular_tickers):
-                                        # Valid ticker
+                                        # Valid US ticker
+                                        if item_upper not in st.session_state.selected_stocks:
+                                            st.session_state.selected_stocks.append(item_upper)
+                                            added_stocks.append(item_upper)
+                                    # For non-US markets: check if it's in the market's popular stocks
+                                    elif (current_market != 'US' and 
+                                          item_upper in market_popular_stocks):
+                                        # Valid non-US ticker
                                         if item_upper not in st.session_state.selected_stocks:
                                             st.session_state.selected_stocks.append(item_upper)
                                             added_stocks.append(item_upper)
