@@ -1557,10 +1557,6 @@ with tab4:
                                         currency_symbol = market_config.get('currency_symbol', '$')
                                         popular_stocks = get_market_popular_stocks(current_market)[:6]
                                         
-                                        # Debug: Show current market and stocks
-                                        st.write(f"🔍 DEBUG: Current market: {current_market}")
-                                        st.write(f"🔍 DEBUG: Popular stocks: {popular_stocks}")
-                                        
                                         # Create market-specific examples
                                         high_price_examples = ", ".join(popular_stocks[:2])
                                         mid_price_examples = ", ".join(popular_stocks[2:4])
