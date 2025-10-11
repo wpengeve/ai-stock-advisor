@@ -1057,8 +1057,23 @@ with tab4:
                     
                     with input_tab1:
                         st.markdown("**Add multiple stocks at once:**")
-                        st.markdown("Type tickers directly (AAPL, MSFT) or company names (Apple, Target, Amazon) - separate with commas")
-                        st.markdown("💡 **Auto-recognition**: Common company names like Apple, Target, Amazon are automatically mapped to their tickers!")
+                        
+                        # Get market-specific examples
+                        current_market = st.session_state.get('selected_market', 'US')
+                        popular_stocks = get_market_popular_stocks(current_market)[:3]
+                        
+                        # Create market-specific examples
+                        ticker_examples = ", ".join(popular_stocks)
+                        if current_market == 'US':
+                            company_examples = "Apple, Target, Amazon"
+                            auto_recognition_examples = "Apple, Target, Amazon"
+                        else:
+                            # For Taiwan market, use actual company names from market config
+                            company_examples = ", ".join([get_stock_name(stock, current_market).split(" - ")[1] if " - " in get_stock_name(stock, current_market) else get_stock_name(stock, current_market) for stock in popular_stocks[:3]])
+                            auto_recognition_examples = company_examples
+                        
+                        st.markdown(f"Type tickers directly ({ticker_examples}) or company names ({company_examples}) - separate with commas")
+                        st.markdown(f"💡 **Auto-recognition**: Common company names like {auto_recognition_examples} are automatically mapped to their tickers!")
                         
                         # Show currently selected stocks
                         if st.session_state.selected_stocks:
@@ -1074,9 +1089,11 @@ with tab4:
                         
                         # Use form to handle Enter key
                         with st.form("add_stocks_form"):
+                            # Create placeholder with market-specific examples
+                            placeholder_examples = f"{ticker_examples}, {company_examples}"
                             user_input = st.text_input(
                                 "Add stocks",
-                                placeholder="AAPL, MSFT, Apple, Target, GOOGL",
+                                placeholder=placeholder_examples,
                                 help="Type tickers or company names separated by commas, then press Enter or click Add",
                                 key="multi_input"
                             )
