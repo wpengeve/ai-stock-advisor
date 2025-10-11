@@ -1532,7 +1532,6 @@ with tab4:
                                     
                                     # Smart stock suggestions for better budget utilization
                                     st.markdown("### 🎯 SMART STOCK SELECTION GUIDE - MARKET SPECIFIC!")
-                                    st.info(f"🔍 Current market: {current_market} - This should show Taiwan stocks when Taiwan is selected!")
                                     
                                     # Calculate average price of selected stocks
                                     avg_price = sum(prices.get(ticker, 0) for ticker in selected_symbols) / len(selected_symbols)
@@ -1558,10 +1557,10 @@ with tab4:
                                         currency_symbol = market_config.get('currency_symbol', '$')
                                         popular_stocks = get_market_popular_stocks(current_market)[:6]
                                         
-                                        # Create market-specific examples
-                                        high_price_examples = ", ".join(popular_stocks[:2])
-                                        mid_price_examples = ", ".join(popular_stocks[2:4])
-                                        low_price_examples = ", ".join(popular_stocks[4:6])
+                                        # Create market-specific examples with formatted names
+                                        high_price_examples = ", ".join([f"{stock} - {get_stock_name(stock, current_market)}" for stock in popular_stocks[:2]])
+                                        mid_price_examples = ", ".join([f"{stock} - {get_stock_name(stock, current_market)}" for stock in popular_stocks[2:4]])
+                                        low_price_examples = ", ".join([f"{stock} - {get_stock_name(stock, current_market)}" for stock in popular_stocks[4:6]])
                                         
                                         st.markdown(f"""
                                         **🎯 Mix Price Ranges:**
@@ -1580,8 +1579,8 @@ with tab4:
                                     col1, col2, col3 = st.columns(3)
                                     
                                     with col1:
-                                        # Large Cap examples from current market
-                                        large_cap_examples = ", ".join(popular_stocks[:4])
+                                        # Large Cap examples from current market with formatted names
+                                        large_cap_examples = ", ".join([f"{stock} - {get_stock_name(stock, current_market)}" for stock in popular_stocks[:4]])
                                         st.markdown(f"""
                                         **🏢 Large Cap (Stable)**
                                         - {large_cap_examples}
@@ -1590,8 +1589,9 @@ with tab4:
                                         """)
                                     
                                     with col2:
-                                        # Tech Growth examples from current market
-                                        tech_examples = ", ".join(popular_stocks[4:7]) if len(popular_stocks) >= 7 else ", ".join(popular_stocks[4:])
+                                        # Tech Growth examples from current market with formatted names
+                                        tech_stocks = popular_stocks[4:7] if len(popular_stocks) >= 7 else popular_stocks[4:]
+                                        tech_examples = ", ".join([f"{stock} - {get_stock_name(stock, current_market)}" for stock in tech_stocks])
                                         st.markdown(f"""
                                         **💻 Tech Growth**
                                         - {tech_examples}
